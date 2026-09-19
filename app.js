@@ -66,6 +66,35 @@ const ASK_QUOTES=[
   'Woef! Weet jij deze?',
   'Pootjes klaar? Hier komt-ie.'
 ];
+const SOPHIE_GOOD_QUOTES=[
+  'Sophie! Dat was zo goed dat ik bijna mijn eigen staart een high-five gaf.',
+  'Woef Sophie! Als Engels een tennisbal was, had jij ’m al gevangen.',
+  'Sophie, jij bent slimmer dan mijn voerbak. En die weet precies hoe laat het eten is.',
+  'Sophie! Ik zou applaudisseren, maar ja... pootjes.',
+  'Tien uit tien, Sophie. Ik zou opnieuw kwispelen.',
+  'Sophie, zó goed. Zelfs de kat keek even onder de indruk.'
+];
+const SOPHIE_WRONG_QUOTES=[
+  'Bijna, Sophie! Die glipte weg als een tennisbal onder de bank.',
+  'Geen paniek Sophie, mijn eerste Engels was ook alleen “woef”.',
+  'Sophie, deze begraven we even en graven we later weer op.',
+  'Oeps Sophie. Ik geef de kat de schuld.',
+  'Sophie, één foutje? Dat noem ik gewoon een oefen-snuffel.'
+];
+const SOPHIE_ASK_QUOTES=[
+  'Sophie, klaar? Mijn diploma als quizhond staat op het spel.',
+  'Sophie, als jij deze weet, doe ik alsof ik niet op de bank kom.',
+  'Oké Sophie, focus. Ik probeer hier heel professioneel hond te zijn.',
+  'Sophie! Nieuwe vraag. Ik heb er speciaal aan geroken.',
+  'Kom op Sophie, deze kun jij. Mijn staart gelooft in je.'
+];
+const SLEEP_QUOTES=[
+  'Zzz... Sophie... nog vijf minuutjes...',
+  'Zzz... ik droom dat Sophie alle antwoorden goed heeft...',
+  'Zzz... botjes... Engelse woordjes... nog meer botjes...',
+  'Zzz... Sophie, maak me wakker als er snacks zijn.',
+  'Zzz... ik slaap niet. Ik oefen het Engelse woord “resting”.'
+];
 
 let progress=loadProgress();
 let sessionCorrect=0;
@@ -76,6 +105,9 @@ let revealed=false;
 let answered=false;
 let learnTimer=null;
 let dragGhost=null;
+let sleepTimer=null;
+let wakeTimer=null;
+let dogSleeping=false;
 
 function defaultMeta(){return {streak:0,bones:0,boneProgress:0};}
 function loadProgress(){
@@ -155,6 +187,48 @@ function pickItem(forcedCategory){
 function sayDog(text){
   if($('#dogSpeech'))$('#dogSpeech').textContent=text;
 }
+function wakeDog(message){
+  if(sleepTimer){clearTimeout(sleepTimer);sleepTimer=null;}
+  if(wakeTimer){clearTimeout(wakeTimer);wakeTimer=null;}
+  dogSleeping=false;
+  const zone=$('#dogDropZone');
+  if(zone)zone.classList.remove('sleeping');
+  if(message)sayDog(message);
+}
+function scheduleDogNap(){
+  if(!$('#dogDropZone')||!$('#dogSpeech'))return;
+  if(sleepTimer)clearTimeout(sleepTimer);
+  if(wakeTimer)clearTimeout(wakeTimer);
+  dogSleeping=false;
+  $('#dogDropZone').classList.remove('sleeping');
+
+  // Pip is distractible, but not so sleepy that he becomes annoying.
+  if(Math.random()>.28)return;
+  sleepTimer=setTimeout(()=>{
+    dogSleeping=true;
+    const zone=$('#dogDropZone');
+    if(zone)zone.classList.add('sleeping');
+    sayDog(randomFrom(SLEEP_QUOTES));
+    wakeTimer=setTimeout(()=>{
+      dogSleeping=false;
+      if(zone)zone.classList.remove('sleeping');
+      sayDog('Huh? O ja! Jij was bezig, Sophie. Ga door!');
+    },4800);
+  },6500+Math.random()*6500);
+}
+function dogReaction(correct){
+  const sophieChance=.42;
+  if(Math.random()<sophieChance){
+    return randomFrom(correct?SOPHIE_GOOD_QUOTES:SOPHIE_WRONG_QUOTES);
+  }
+  return randomFrom(correct?GOOD_QUOTES:WRONG_QUOTES);
+}
+function dogQuestion(text){
+  wakeDog();
+  if(Math.random()<.35)sayDog(randomFrom(SOPHIE_ASK_QUOTES)+' '+text);
+  else sayDog(text);
+  scheduleDogNap();
+}
 function questionFor(item,direction){
   const enPrompt=direction==='en-nl';
   if(pageMode==='learn')return enPrompt?'Ken jij de Nederlandse betekenis van “'+displayEn(item)+'”?':'Hoe zeg je “'+displayNl(item)+'” in het Engels?';
@@ -164,6 +238,7 @@ function questionFor(item,direction){
   return 'Woef! Klaar om te oefenen?';
 }
 function recordResult(item,correct){
+  wakeDog();
   const p=ensureState(item);
   let earnedBone=false;
   if(correct){
@@ -189,7 +264,7 @@ function recordResult(item,correct){
   if(earnedBone){
     showBoneReward();
   }else{
-    sayDog(correct?randomFrom(GOOD_QUOTES):randomFrom(WRONG_QUOTES));
+    sayDog(dogReaction(correct));
   }
   return earnedBone;
 }
@@ -257,6 +332,7 @@ function bark(){
   }catch(e){}
 }
 function feedDog(){
+  wakeDog();
   if((progress._meta.bones||0)<1)return false;
   progress._meta.bones--;
   saveProgress();updateBoneUI();
@@ -266,10 +342,11 @@ function feedDog(){
     setTimeout(()=>zone.classList.remove('fed'),900);
   }
   sayDog(randomFrom([
-    'WOOF! Dankjewel! ♥',
-    'Jaaaa! Botje! Jij bent mijn favoriete mens. ♥',
+    'WOOF! Dankjewel, Sophie! ♥',
+    'Jaaaa! Botje! Sophie, jij bent mijn favoriete mens. ♥',
     'Woef woef! Deze is heerlijk! ♥',
-    'Botje ontvangen. Staart op standje turbo! ♥'
+    'Botje ontvangen. Staart op standje turbo! ♥',
+    'Sophie! Een botje! Ik neem alles terug wat ik ooit over huiswerk heb gezegd. ♥'
   ]));
   bark();
   return true;
@@ -330,11 +407,12 @@ function renderLearn(){
   $('#flashPrompt').textContent=enPrompt?displayEn(currentItem):displayNl(currentItem);
   $('#flashAnswer').textContent=enPrompt?displayNl(currentItem):displayEn(currentItem);
   $('#flashAnswer').hidden=true;$('#tapHint').hidden=false;
-  sayDog(questionFor(currentItem,currentDirection));
+  dogQuestion(questionFor(currentItem,currentDirection));
 }
 function revealLearn(){
+  wakeDog();
   revealed=true;$('#flashAnswer').hidden=false;$('#tapHint').hidden=true;
-  sayDog('En? Wist je ’m?');
+  sayDog(Math.random()<.4?'En Sophie... wist je ’m?':'En? Wist je ’m?');
 }
 function finishLearn(correct){
   if(answered)return;
@@ -366,7 +444,7 @@ function renderQuiz(){
   $('#quizPromptLabel').textContent=enPrompt?'Wat betekent dit in het Nederlands?':'Wat is dit in het Engels?';
   $('#quizPrompt').textContent=enPrompt?displayEn(currentItem):displayNl(currentItem);
   $('#quizFeedback').textContent='';$('#quizFeedback').className='feedback';$('#quizNext').hidden=true;
-  sayDog(questionFor(currentItem,currentDirection));
+  dogQuestion(questionFor(currentItem,currentDirection));
   const holder=$('#quizAnswers');holder.innerHTML='';
   buildQuizOptions(currentItem,currentDirection).forEach(option=>{
     const b=document.createElement('button');b.type='button';b.className='answer-button';b.textContent=option;
@@ -390,7 +468,7 @@ function renderType(){
   $('#typePrompt').textContent=enPrompt?displayEn(currentItem):displayNl(currentItem);
   $('#typeAnswer').value='';$('#typeAnswer').disabled=false;$('#typeAnswer').className='';
   $('#typeFeedback').textContent='';$('#typeFeedback').className='feedback';$('#typeNext').hidden=true;
-  sayDog(questionFor(currentItem,currentDirection));
+  dogQuestion(questionFor(currentItem,currentDirection));
   setTimeout(()=>$('#typeAnswer').focus(),30);
 }
 function checkTyped(e){
@@ -410,7 +488,7 @@ function renderTime(){
   $('#timeSentence').textContent=blankExample(currentItem);
   $('#timeHint').textContent='Nederlandse hint: '+displayNl(currentItem);
   $('#timeFeedback').textContent='';$('#timeFeedback').className='feedback';$('#timeNext').hidden=true;
-  sayDog(randomFrom(ASK_QUOTES)+' Welk woord mist er?');
+  dogQuestion((Math.random()<.4?randomFrom(SOPHIE_ASK_QUOTES):randomFrom(ASK_QUOTES))+' Welk woord mist er?');
   const holder=$('#timeAnswers');holder.innerHTML='';
   shuffle(ITEMS.filter(i=>i.category==='time')).forEach(item=>{
     const b=document.createElement('button');b.type='button';b.className='chip-button';b.textContent=displayEn(item);
@@ -434,10 +512,17 @@ function wireSharedControls(render){
 }
 function initCommon(){
   updateStats();updateBoneUI();setupBoneDrag();
+  const zone=$('#dogDropZone');
+  if(zone){
+    zone.addEventListener('click',()=>{
+      if(dogSleeping)wakeDog('Huh?! O, hoi Sophie. Ik was eh... aan het nadenken.');
+    });
+  }
 }
 function initHome(){
   initCommon();
-  sayDog((progress._meta.bones||0)>0?'Woef! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' bewaard.':'Woef! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
+  sayDog((progress._meta.bones||0)>0?'Sophie! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' bewaard. Ik heb toevallig héél veel trek.':'Woef Sophie! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
+  scheduleDogNap();
   if($('#resetProgress'))$('#resetProgress').addEventListener('click',()=>{
     if(!window.confirm('Weet je zeker dat je alle voortgang en botjes wilt wissen?'))return;
     progress={_meta:defaultMeta()};sessionCorrect=0;sessionAttempts=0;saveProgress();updateStats();updateBoneUI();sayDog('Alles schoon! Nieuwe ronde?');
