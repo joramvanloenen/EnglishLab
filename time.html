@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6f5be7">
+  <meta name="description" content="EnglishLab Time challenge">
+  <title>EnglishLab — Time challenge</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="practice-page" data-mode="time">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
+      <div class="lesson-pill">Nice to meet you <span>•</span> Lesson 2</div>
+    </header>
+
+    <main>
+      <section class="practice-page-header">
+        <a class="back-link" href="index.html">← Back to practice modes</a>
+        <div class="practice-title-row">
+          <div>
+            <p class="eyebrow">04 · Practice mode</p>
+            <h1>Time challenge</h1>
+            <p>Choose the missing time word inside a complete English sentence.</p>
+          </div>
+          <div class="mini-stats">
+            <div><strong id="masteredCount">0</strong><span>mastered</span></div>
+            <div><strong id="sessionScore">0/0</strong><span>this session</span></div>
+            <div><strong id="streakCount">0</strong><span>streak</span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="time-only-note">6 time words · English sentence challenge</div>
+
+      <section class="single-practice-layout">
+        <article class="practice-card">
+          
+<div id="timeMode" class="mode-panel">
+  <div class="card-topline"><span class="category-badge">Time preposition</span><span class="counter" id="timeCounter">6 words to know</span></div>
+  <p class="question-kicker">Which word belongs in the gap?</p>
+  <h2 class="sentence" id="timeSentence">We can play together ___ lunch.</h2>
+  <p class="dutch-hint" id="timeHint">Dutch hint: na</p>
+  <div class="chip-grid" id="timeAnswers"></div>
+  <p class="feedback" id="timeFeedback" aria-live="polite"></p>
+  <button id="timeNext" class="primary-button next-button" type="button" hidden>Next →</button>
+</div>
+        </article>
+        <aside class="side-panel">
+          <div class="side-section">
+            <div class="side-heading"><h2>Your progress</h2><span id="progressPercent">0%</span></div>
+            <div class="progress-track"><span id="progressBar"></span></div>
+            <p class="side-copy" id="progressMessage">Every correct answer moves an item closer to mastered.</p>
+          </div>
+          <div class="tip-box">
+            <span class="tip-icon">✦</span>
+            <p id="modeTip"><strong>Tip:</strong> Say the answer out loud before choosing.</p>
+          </div>
+          <a class="switch-mode-link" href="index.html">Choose another mode →</a>
+        </aside>
+      </section>
+    </main>
+
+    <footer><span>EnglishLab</span><span>Time challenge mode</span></footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

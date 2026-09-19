@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6f5be7">
+  <meta name="description" content="EnglishLab Learn">
+  <title>EnglishLab — Learn</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="practice-page" data-mode="learn">
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
+      <div class="lesson-pill">Nice to meet you <span>•</span> Lesson 2</div>
+    </header>
+
+    <main>
+      <section class="practice-page-header">
+        <a class="back-link" href="index.html">← Back to practice modes</a>
+        <div class="practice-title-row">
+          <div>
+            <p class="eyebrow">01 · Practice mode</p>
+            <h1>Learn</h1>
+            <p>Flip, listen and decide whether you knew it.</p>
+          </div>
+          <div class="mini-stats">
+            <div><strong id="masteredCount">0</strong><span>mastered</span></div>
+            <div><strong id="sessionScore">0/0</strong><span>this session</span></div>
+            <div><strong id="streakCount">0</strong><span>streak</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="controls practice-controls" aria-label="Practice controls">
+        <div class="control-group">
+          <label for="categorySelect">Practice</label>
+          <select id="categorySelect">
+            <option value="all">Everything</option>
+            <option value="words">Words</option>
+            <option value="phrases">Phrases</option>
+            <option value="time">Time prepositions</option>
+            <option value="mistakes">My mistakes</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="directionSelect">Direction</label>
+          <select id="directionSelect">
+            <option value="mix">Mix both ways</option>
+            <option value="en-nl">English → Dutch</option>
+            <option value="nl-en">Dutch → English</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="single-practice-layout">
+        <article class="practice-card">
+          
+<div id="learnMode" class="mode-panel">
+  <div class="card-topline"><span class="category-badge" id="learnCategory">Word</span><span class="counter" id="learnCounter">33 in set</span></div>
+  <button id="speakButton" class="speak-button" type="button">🔊 Hear it</button>
+  <button id="flashcard" class="flashcard" type="button" aria-live="polite">
+    <span class="flash-label" id="flashPromptLabel">English</span>
+    <strong id="flashPrompt">colour</strong>
+    <span class="tap-hint" id="tapHint">Tap to reveal</span>
+    <span class="flash-answer" id="flashAnswer" hidden>kleur</span>
+  </button>
+  <div class="learn-actions">
+    <button id="againButton" class="secondary-button" type="button">↺ Again</button>
+    <button id="gotItButton" class="primary-button" type="button">Got it ✓</button>
+  </div>
+</div>
+        </article>
+        <aside class="side-panel">
+          <div class="side-section">
+            <div class="side-heading"><h2>Your progress</h2><span id="progressPercent">0%</span></div>
+            <div class="progress-track"><span id="progressBar"></span></div>
+            <p class="side-copy" id="progressMessage">Every correct answer moves an item closer to mastered.</p>
+          </div>
+          <div class="tip-box">
+            <span class="tip-icon">✦</span>
+            <p id="modeTip"><strong>Tip:</strong> Say the answer out loud before choosing.</p>
+          </div>
+          <a class="switch-mode-link" href="index.html">Choose another mode →</a>
+        </aside>
+      </section>
+    </main>
+
+    <footer><span>EnglishLab</span><span>Learn mode</span></footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
