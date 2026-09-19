@@ -37,6 +37,7 @@ const ITEMS = [
 ];
 
 const STORAGE_KEY='englishlab-progress-v3';
+const PLAYER_NAME_KEY='englishlab-player-name-v1';
 const PREVIOUS_KEYS=['englishlab-progress-v2','englishlab-progress-v1'];
 const CATEGORY_LABELS={words:'Woord',phrases:'Zin',time:'Tijdwoord'};
 const $=s=>document.querySelector(s);
@@ -66,52 +67,53 @@ const ASK_QUOTES=[
   'Woef! Weet jij deze?',
   'Pootjes klaar? Hier komt-ie.'
 ];
-const SOPHIE_GOOD_QUOTES=[
-  'Sophie! Dat was zo goed dat ik bijna mijn eigen staart een high-five gaf.',
-  'Woef Sophie! Als Engels een tennisbal was, had jij ’m al gevangen.',
-  'Sophie, jij bent slimmer dan mijn voerbak. En die weet precies hoe laat het eten is.',
-  'Sophie! Ik zou applaudisseren, maar ja... pootjes.',
-  'Tien uit tien, Sophie. Ik zou opnieuw kwispelen.',
-  'Sophie, zó goed. Zelfs de kat keek even onder de indruk.'
+const PLAYER_GOOD_QUOTES=[
+  '{name}! Dat was zo goed dat ik bijna mijn eigen staart een high-five gaf.',
+  'Woef {name}! Als Engels een tennisbal was, had jij ’m al gevangen.',
+  '{name}, jij bent slimmer dan mijn voerbak. En die weet precies hoe laat het eten is.',
+  '{name}! Ik zou applaudisseren, maar ja... pootjes.',
+  'Tien uit tien, {name}. Ik zou opnieuw kwispelen.',
+  '{name}, zó goed. Zelfs de kat keek even onder de indruk.'
 ];
-const SOPHIE_WRONG_QUOTES=[
-  'Bijna, Sophie! Die glipte weg als een tennisbal onder de bank.',
-  'Geen paniek Sophie, mijn eerste Engels was ook alleen “woef”.',
-  'Sophie, deze begraven we even en graven we later weer op.',
-  'Oeps Sophie. Ik geef de kat de schuld.',
-  'Sophie, één foutje? Dat noem ik gewoon een oefen-snuffel.'
+const PLAYER_WRONG_QUOTES=[
+  'Bijna, {name}! Die glipte weg als een tennisbal onder de bank.',
+  'Geen paniek {name}, mijn eerste Engels was ook alleen “woef”.',
+  '{name}, deze begraven we even en graven we later weer op.',
+  'Oeps {name}. Ik geef de kat de schuld.',
+  '{name}, één foutje? Dat noem ik gewoon een oefen-snuffel.'
 ];
-const SOPHIE_ASK_QUOTES=[
-  'Sophie, klaar? Mijn diploma als quizhond staat op het spel.',
-  'Sophie, als jij deze weet, doe ik alsof ik niet op de bank kom.',
-  'Oké Sophie, focus. Ik probeer hier heel professioneel hond te zijn.',
-  'Sophie! Nieuwe vraag. Ik heb er speciaal aan geroken.',
-  'Kom op Sophie, deze kun jij. Mijn staart gelooft in je.'
+const PLAYER_ASK_QUOTES=[
+  '{name}, klaar? Mijn diploma als quizhond staat op het spel.',
+  '{name}, als jij deze weet, doe ik alsof ik niet op de bank kom.',
+  'Oké {name}, focus. Ik probeer hier heel professioneel hond te zijn.',
+  '{name}! Nieuwe vraag. Ik heb er speciaal aan geroken.',
+  'Kom op {name}, deze kun jij. Mijn staart gelooft in je.'
 ];
 const SLEEP_QUOTES=[
-  'Zzz... Sophie... nog vijf minuutjes...',
-  'Zzz... ik droom dat Sophie alle antwoorden goed heeft...',
+  'Zzz... {name}... nog vijf minuutjes...',
+  'Zzz... ik droom dat {name} alle antwoorden goed heeft...',
   'Zzz... botjes... Engelse woordjes... nog meer botjes...',
-  'Zzz... Sophie, maak me wakker als er snacks zijn.',
+  'Zzz... {name}, maak me wakker als er snacks zijn.',
   'Zzz... ik slaap niet. Ik oefen het Engelse woord “resting”.'
 ];
 const EAT_QUOTES=[
-  'HAP! Sophie, ik dacht dat dat een koekje was.',
+  'HAP! {name}, ik dacht dat dat een koekje was.',
   'Nom nom... interface.',
   'Oeps. Was die belangrijk?',
-  'Sophie... hij zag eruit als een snack.',
+  '{name}... hij zag eruit als een snack.',
   'Mmm. Knapperige pixels.',
   'Ik heb ’m even geleend. Met mijn mond.'
 ];
 const SPIT_QUOTES=[
   'Blegh! Geen botje. Hier heb je ’m terug.',
-  'Oké Sophie, deze smaakte naar huiswerk.',
+  'Oké {name}, deze smaakte naar huiswerk.',
   'Bwehh... veel te veel pixels.',
   'Terug ermee. Ik prefereer botjes.',
   'Prrft! Niet lekker. Jij mag ’m houden.'
 ];
 
 let progress=loadProgress();
+let playerName=loadPlayerName();
 let sessionCorrect=0;
 let sessionAttempts=0;
 let currentItem=null;
@@ -127,6 +129,21 @@ let uiEatTimer=null;
 let uiEating=false;
 
 function defaultMeta(){return {streak:0,bones:0,boneProgress:0};}
+function cleanPlayerName(value){
+  return String(value||'').replace(/\s+/g,' ').trim().slice(0,24);
+}
+function loadPlayerName(){
+  try{return cleanPlayerName(localStorage.getItem(PLAYER_NAME_KEY)||'');}catch(e){return '';}
+}
+function savePlayerName(name){
+  playerName=cleanPlayerName(name);
+  try{localStorage.setItem(PLAYER_NAME_KEY,playerName);}catch(e){}
+  updatePlayerNameButtons();
+}
+function playerText(text){
+  const name=playerName||'jij';
+  return String(text||'').replace(/\{name\}/g,name);
+}
 function loadProgress(){
   let data={};
   try{
@@ -202,7 +219,91 @@ function pickItem(forcedCategory){
   return next;
 }
 function sayDog(text){
-  if($('#dogSpeech'))$('#dogSpeech').textContent=text;
+  if($('#dogSpeech'))$('#dogSpeech').textContent=playerText(text);
+}
+function updatePlayerNameButtons(){
+  document.querySelectorAll('.player-name-button .player-name-value').forEach(el=>{
+    el.textContent=playerName||'Naam instellen';
+  });
+}
+function buildPlayerNameUI(){
+  if(!document.querySelector('.player-name-button')){
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='player-name-button';
+    button.innerHTML='<span class="player-name-icon">👤</span><span class="player-name-value"></span>';
+    button.setAttribute('aria-label','Naam wijzigen');
+    button.addEventListener('click',()=>openPlayerNameDialog(false));
+
+    if(pageMode==='home'){
+      const topbar=$('.topbar');
+      const reset=$('#resetProgress');
+      if(topbar) topbar.insertBefore(button,reset||null);
+    }else{
+      const header=$('.practice-page-header');
+      if(header) header.appendChild(button);
+    }
+  }
+
+  if(!$('#playerNameDialog')){
+    const overlay=document.createElement('div');
+    overlay.id='playerNameDialog';
+    overlay.className='name-dialog-backdrop';
+    overlay.hidden=true;
+    overlay.innerHTML='<form class="name-dialog-card" id="playerNameForm">'+
+      '<div class="name-dialog-dog">🐶</div>'+
+      '<p class="eyebrow">Pip wil iets weten</p>'+
+      '<h2>Hoe heet jij?</h2>'+
+      '<p class="name-dialog-copy">Dan kan Pip je aanmoedigen, grapjes maken en natuurlijk jouw botjes bewaken.</p>'+
+      '<label for="playerNameInput">Jouw naam</label>'+
+      '<input id="playerNameInput" name="playerName" type="text" maxlength="24" autocomplete="name" placeholder="Bijvoorbeeld: Sam" required>'+
+      '<p class="name-dialog-error" id="playerNameError" aria-live="polite"></p>'+
+      '<div class="name-dialog-actions"><button id="cancelNameChange" class="secondary-button" type="button">Annuleren</button><button class="primary-button" type="submit">Dit ben ik ✓</button></div>'+
+      '</form>';
+    document.body.appendChild(overlay);
+
+    $('#playerNameForm').addEventListener('submit',e=>{
+      e.preventDefault();
+      const input=$('#playerNameInput');
+      const name=cleanPlayerName(input.value);
+      if(!name){
+        $('#playerNameError').textContent='Pip moet wel weten hoe hij je mag noemen.';
+        input.focus();
+        return;
+      }
+      const firstTime=!playerName;
+      savePlayerName(name);
+      closePlayerNameDialog();
+      sayDog(firstTime?'Woef! Hoi {name}! Nu zijn we officieel een team.':'Oké, vanaf nu noem ik je {name}. Pootje erop!');
+    });
+    $('#cancelNameChange').addEventListener('click',closePlayerNameDialog);
+  }
+  updatePlayerNameButtons();
+}
+function openPlayerNameDialog(firstTime=false){
+  buildPlayerNameUI();
+  const dialog=$('#playerNameDialog');
+  const input=$('#playerNameInput');
+  const cancel=$('#cancelNameChange');
+  if(!dialog||!input)return;
+  dialog.hidden=false;
+  dialog.dataset.firstTime=firstTime?'true':'false';
+  cancel.hidden=firstTime;
+  input.value=playerName||'';
+  $('#playerNameError').textContent='';
+  document.body.classList.add('name-dialog-open');
+  setTimeout(()=>{input.focus();input.select();},40);
+}
+function closePlayerNameDialog(){
+  const dialog=$('#playerNameDialog');
+  if(!dialog)return;
+  if(dialog.dataset.firstTime==='true'&&!playerName)return;
+  dialog.hidden=true;
+  document.body.classList.remove('name-dialog-open');
+}
+function setupPlayerName(){
+  buildPlayerNameUI();
+  if(!playerName) openPlayerNameDialog(true);
 }
 function wakeDog(message){
   if(sleepTimer){clearTimeout(sleepTimer);sleepTimer=null;}
@@ -229,20 +330,20 @@ function scheduleDogNap(){
     wakeTimer=setTimeout(()=>{
       dogSleeping=false;
       if(zone)zone.classList.remove('sleeping');
-      sayDog('Huh? O ja! Jij was bezig, Sophie. Ga door!');
+      sayDog('Huh? O ja! Jij was bezig, {name}. Ga door!');
     },4800);
   },6500+Math.random()*6500);
 }
 function dogReaction(correct){
   const sophieChance=.42;
   if(Math.random()<sophieChance){
-    return randomFrom(correct?SOPHIE_GOOD_QUOTES:SOPHIE_WRONG_QUOTES);
+    return randomFrom(correct?PLAYER_GOOD_QUOTES:PLAYER_WRONG_QUOTES);
   }
   return randomFrom(correct?GOOD_QUOTES:WRONG_QUOTES);
 }
 function dogQuestion(text){
   wakeDog();
-  if(Math.random()<.35)sayDog(randomFrom(SOPHIE_ASK_QUOTES)+' '+text);
+  if(Math.random()<.35)sayDog(randomFrom(PLAYER_ASK_QUOTES)+' '+text);
   else sayDog(text);
   scheduleDogNap();
   scheduleUIMischief(.14);
@@ -435,11 +536,11 @@ function feedDog(){
     setTimeout(()=>zone.classList.remove('fed'),900);
   }
   sayDog(randomFrom([
-    'WOOF! Dankjewel, Sophie! ♥',
-    'Jaaaa! Botje! Sophie, jij bent mijn favoriete mens. ♥',
+    'WOOF! Dankjewel, {name}! ♥',
+    'Jaaaa! Botje! {name}, jij bent mijn favoriete mens. ♥',
     'Woef woef! Deze is heerlijk! ♥',
     'Botje ontvangen. Staart op standje turbo! ♥',
-    'Sophie! Een botje! Ik neem alles terug wat ik ooit over huiswerk heb gezegd. ♥'
+    '{name}! Een botje! Ik neem alles terug wat ik ooit over huiswerk heb gezegd. ♥'
   ]));
   bark();
   return true;
@@ -505,7 +606,7 @@ function renderLearn(){
 function revealLearn(){
   wakeDog();
   revealed=true;$('#flashAnswer').hidden=false;$('#tapHint').hidden=true;
-  sayDog(Math.random()<.4?'En Sophie... wist je ’m?':'En? Wist je ’m?');
+  sayDog(Math.random()<.4?'En {name}... wist je ’m?':'En? Wist je ’m?');
 }
 function finishLearn(correct){
   if(answered)return;
@@ -581,7 +682,7 @@ function renderTime(){
   $('#timeSentence').textContent=blankExample(currentItem);
   $('#timeHint').textContent='Nederlandse hint: '+displayNl(currentItem);
   $('#timeFeedback').textContent='';$('#timeFeedback').className='feedback';$('#timeNext').hidden=true;
-  dogQuestion((Math.random()<.4?randomFrom(SOPHIE_ASK_QUOTES):randomFrom(ASK_QUOTES))+' Welk woord mist er?');
+  dogQuestion((Math.random()<.4?randomFrom(PLAYER_ASK_QUOTES):randomFrom(ASK_QUOTES))+' Welk woord mist er?');
   const holder=$('#timeAnswers');holder.innerHTML='';
   shuffle(ITEMS.filter(i=>i.category==='time')).forEach(item=>{
     const b=document.createElement('button');b.type='button';b.className='chip-button';b.textContent=displayEn(item);
@@ -628,13 +729,13 @@ function initCommon(){
   const zone=$('#dogDropZone');
   if(zone){
     zone.addEventListener('click',()=>{
-      if(dogSleeping)wakeDog('Huh?! O, hoi Sophie. Ik was eh... aan het nadenken.');
+      if(dogSleeping)wakeDog('Huh?! O, hoi {name}. Ik was eh... aan het nadenken.');
     });
   }
 }
 function initHome(){
   initCommon();
-  sayDog((progress._meta.bones||0)>0?'Sophie! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' bewaard. Ik heb toevallig héél veel trek.':'Woef Sophie! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
+  sayDog((progress._meta.bones||0)>0?'{name}! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' bewaard. Ik heb toevallig héél veel trek.':'Woef {name}! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
   scheduleDogNap();
   scheduleUIMischief(.62,5500,11000);
   if($('#resetProgress'))$('#resetProgress').addEventListener('click',()=>{
@@ -653,6 +754,8 @@ function initLearn(){
 function initQuiz(){initCommon();wireSharedControls(renderQuiz);$('#quizNext').addEventListener('click',renderQuiz);renderQuiz();}
 function initType(){initCommon();wireSharedControls(renderType);$('#typeForm').addEventListener('submit',checkTyped);$('#typeNext').addEventListener('click',renderType);renderType();}
 function initTime(){initCommon();$('#timeNext').addEventListener('click',renderTime);renderTime();}
+
+setupPlayerName();
 
 if(pageMode==='home')initHome();
 if(pageMode==='learn')initLearn();

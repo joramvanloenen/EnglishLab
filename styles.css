@@ -361,3 +361,107 @@ footer span:first-child{font-weight:950;color:var(--ink)}
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* Player name */
+.player-name-button{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.82);
+  color:var(--ink);
+  min-height:34px;
+  max-width:180px;
+  padding:0 11px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.player-name-button:hover{background:#fff;border-color:rgba(119,103,232,.35)}
+.player-name-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.practice-page-header{position:relative}
+.practice-page-header>.player-name-button{position:absolute;right:0;top:12px}
+
+.name-dialog-open{overflow:hidden}
+.name-dialog-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(36,34,55,.48);
+  backdrop-filter:blur(8px);
+}
+.name-dialog-backdrop[hidden]{display:none!important}
+.name-dialog-card{
+  width:min(430px,100%);
+  padding:28px;
+  border:1px solid rgba(36,34,55,.09);
+  border-radius:28px;
+  background:#fffdf8;
+  box-shadow:0 28px 90px rgba(36,34,55,.28);
+}
+.name-dialog-dog{
+  width:62px;height:62px;
+  display:grid;place-items:center;
+  margin-bottom:16px;
+  border-radius:20px;
+  background:var(--accent-soft);
+  font-size:2.2rem;
+  transform:rotate(-3deg);
+}
+.name-dialog-card h2{
+  margin:0;
+  font-size:clamp(2rem,7vw,3.2rem);
+  line-height:1;
+  letter-spacing:-.05em;
+}
+.name-dialog-copy{margin:12px 0 20px;color:var(--muted)}
+.name-dialog-card label{
+  display:block;
+  margin-bottom:7px;
+  font-size:.75rem;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+.name-dialog-card input{
+  width:100%;
+  min-height:54px;
+  padding:0 15px;
+  border:2px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--ink);
+  font-size:1.05rem;
+  font-weight:800;
+}
+.name-dialog-card input:focus{border-color:var(--purple)}
+.name-dialog-error{min-height:20px;margin:7px 0 0;color:var(--red);font-size:.8rem;font-weight:800}
+.name-dialog-actions{display:grid;grid-template-columns:auto 1fr;gap:9px;margin-top:12px}
+.name-dialog-actions .primary-button,.name-dialog-actions .secondary-button{min-height:48px}
+
+@media(max-width:680px){
+  .home-page .player-name-button{
+    max-width:110px;
+    min-height:32px;
+    padding:0 9px;
+    font-size:.7rem;
+  }
+  .practice-page-header>.player-name-button{
+    position:static;
+    margin-left:auto;
+    max-width:110px;
+    min-height:36px;
+    padding:0 9px;
+    flex:0 1 auto;
+    font-size:.7rem;
+  }
+  .player-name-icon{display:none}
+  .name-dialog-card{padding:22px 18px;border-radius:22px}
+  .name-dialog-actions{grid-template-columns:1fr}
+  .name-dialog-actions .secondary-button{order:2}
+}
