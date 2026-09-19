@@ -1,92 +1,90 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#6f5be7">
-  <meta name="description" content="EnglishLab Learn">
-  <title>EnglishLab — Learn</title>
+  <meta name="description" content="EnglishLab — Leren">
+  <title>EnglishLab — Leren</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="practice-page" data-mode="learn">
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="index.html"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
-      <div class="lesson-pill">Nice to meet you <span>•</span> Lesson 2</div>
+      <a class="brand" href="index.html" aria-label="EnglishLab startpagina"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
+      <div class="lesson-pill">Nice to meet you <span>•</span> Les 2</div>
     </header>
 
     <main>
       <section class="practice-page-header">
-        <a class="back-link" href="index.html">← Back to practice modes</a>
+        <a class="back-link" href="index.html">← Terug naar oefenvormen</a>
         <div class="practice-title-row">
           <div>
-            <p class="eyebrow">01 · Practice mode</p>
-            <h1>Learn</h1>
-            <p>Flip, listen and decide whether you knew it.</p>
+            <p class="eyebrow">01 · Oefenvorm</p>
+            <h1>Leren</h1>
+            <p>Bekijk het woord, draai het kaartje om en geef aan of je het wist.</p>
           </div>
           <div class="mini-stats">
-            <div><strong id="masteredCount">0</strong><span>mastered</span></div>
-            <div><strong id="sessionScore">0/0</strong><span>this session</span></div>
-            <div><strong id="streakCount">0</strong><span>streak</span></div>
+            <div><strong id="masteredCount">0</strong><span>beheerst</span></div>
+            <div><strong id="sessionScore">0/0</strong><span>deze ronde</span></div>
+            <div><strong id="streakCount">0</strong><span>reeks</span></div>
           </div>
         </div>
       </section>
 
-      <section class="controls practice-controls" aria-label="Practice controls">
+      <section class="controls practice-controls" aria-label="Oefeninstellingen">
         <div class="control-group">
-          <label for="categorySelect">Practice</label>
+          <label for="categorySelect">Oefenen</label>
           <select id="categorySelect">
-            <option value="all">Everything</option>
-            <option value="words">Words</option>
-            <option value="phrases">Phrases</option>
-            <option value="time">Time prepositions</option>
-            <option value="mistakes">My mistakes</option>
+            <option value="all">Alles</option>
+            <option value="words">Woorden</option>
+            <option value="phrases">Zinnen</option>
+            <option value="time">Tijdwoorden</option>
+            <option value="mistakes">Mijn fouten</option>
           </select>
         </div>
         <div class="control-group">
-          <label for="directionSelect">Direction</label>
+          <label for="directionSelect">Richting</label>
           <select id="directionSelect">
-            <option value="mix">Mix both ways</option>
-            <option value="en-nl">English → Dutch</option>
-            <option value="nl-en">Dutch → English</option>
+            <option value="mix">Door elkaar</option>
+            <option value="en-nl">Engels → Nederlands</option>
+            <option value="nl-en">Nederlands → Engels</option>
           </select>
         </div>
       </section>
 
       <section class="single-practice-layout">
         <article class="practice-card">
-          
 <div id="learnMode" class="mode-panel">
-  <div class="card-topline"><span class="category-badge" id="learnCategory">Word</span><span class="counter" id="learnCounter">33 in set</span></div>
-  <button id="speakButton" class="speak-button" type="button">🔊 Hear it</button>
+  <div class="card-topline"><span class="category-badge" id="learnCategory">Woord</span><span class="counter" id="learnCounter">33 in deze set</span></div>
+  <button id="speakButton" class="speak-button" type="button">🔊 Luister</button>
   <button id="flashcard" class="flashcard" type="button" aria-live="polite">
-    <span class="flash-label" id="flashPromptLabel">English</span>
+    <span class="flash-label" id="flashPromptLabel">Engels</span>
     <strong id="flashPrompt">colour</strong>
-    <span class="tap-hint" id="tapHint">Tap to reveal</span>
+    <span class="tap-hint" id="tapHint">Tik om het antwoord te zien</span>
     <span class="flash-answer" id="flashAnswer" hidden>kleur</span>
   </button>
   <div class="learn-actions">
-    <button id="againButton" class="secondary-button" type="button">↺ Again</button>
-    <button id="gotItButton" class="primary-button" type="button">Got it ✓</button>
+    <button id="againButton" class="secondary-button" type="button">↺ Nog oefenen</button>
+    <button id="gotItButton" class="primary-button" type="button">Ik wist het ✓</button>
   </div>
-</div>
-        </article>
+</div></article>
         <aside class="side-panel">
           <div class="side-section">
-            <div class="side-heading"><h2>Your progress</h2><span id="progressPercent">0%</span></div>
-            <div class="progress-track"><span id="progressBar"></span></div>
-            <p class="side-copy" id="progressMessage">Every correct answer moves an item closer to mastered.</p>
+            <div class="side-heading"><h2>Jouw voortgang</h2><span id="progressPercent">0%</span></div>
+            <div class="progress-track" aria-label="Voortgang"><span id="progressBar"></span></div>
+            <p class="side-copy" id="progressMessage">Elk goed antwoord vult je voortgang een stap verder.</p>
           </div>
           <div class="tip-box">
             <span class="tip-icon">✦</span>
-            <p id="modeTip"><strong>Tip:</strong> Say the answer out loud before choosing.</p>
+            <p id="modeTip"><strong>Tip:</strong> Zeg je antwoord hardop voordat je kiest.</p>
           </div>
-          <a class="switch-mode-link" href="index.html">Choose another mode →</a>
+          <a class="switch-mode-link" href="index.html">Andere oefenvorm kiezen →</a>
         </aside>
       </section>
     </main>
 
-    <footer><span>EnglishLab</span><span>Learn mode</span></footer>
+    <footer><span>EnglishLab</span><span>Leren</span></footer>
   </div>
   <script src="app.js"></script>
 </body>

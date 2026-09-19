@@ -1,68 +1,66 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#6f5be7">
-  <meta name="description" content="EnglishLab Time challenge">
-  <title>EnglishLab — Time challenge</title>
+  <meta name="description" content="EnglishLab — Tijdwoorden">
+  <title>EnglishLab — Tijdwoorden</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="practice-page" data-mode="time">
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="index.html"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
-      <div class="lesson-pill">Nice to meet you <span>•</span> Lesson 2</div>
+      <a class="brand" href="index.html" aria-label="EnglishLab startpagina"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
+      <div class="lesson-pill">Nice to meet you <span>•</span> Les 2</div>
     </header>
 
     <main>
       <section class="practice-page-header">
-        <a class="back-link" href="index.html">← Back to practice modes</a>
+        <a class="back-link" href="index.html">← Terug naar oefenvormen</a>
         <div class="practice-title-row">
           <div>
-            <p class="eyebrow">04 · Practice mode</p>
-            <h1>Time challenge</h1>
-            <p>Choose the missing time word inside a complete English sentence.</p>
+            <p class="eyebrow">04 · Oefenvorm</p>
+            <h1>Tijdwoorden</h1>
+            <p>Kies welk Engels tijdwoord in de zin ontbreekt.</p>
           </div>
           <div class="mini-stats">
-            <div><strong id="masteredCount">0</strong><span>mastered</span></div>
-            <div><strong id="sessionScore">0/0</strong><span>this session</span></div>
-            <div><strong id="streakCount">0</strong><span>streak</span></div>
+            <div><strong id="masteredCount">0</strong><span>beheerst</span></div>
+            <div><strong id="sessionScore">0/0</strong><span>deze ronde</span></div>
+            <div><strong id="streakCount">0</strong><span>reeks</span></div>
           </div>
         </div>
       </section>
 
-      <div class="time-only-note">6 time words · English sentence challenge</div>
+      <div class="time-only-note">6 tijdwoorden · kies het ontbrekende Engelse woord</div>
 
       <section class="single-practice-layout">
         <article class="practice-card">
-          
 <div id="timeMode" class="mode-panel">
-  <div class="card-topline"><span class="category-badge">Time preposition</span><span class="counter" id="timeCounter">6 words to know</span></div>
-  <p class="question-kicker">Which word belongs in the gap?</p>
+  <div class="card-topline"><span class="category-badge">Tijdwoord</span><span class="counter" id="timeCounter">6 woorden</span></div>
+  <p class="question-kicker">Welk woord hoort op de lege plek?</p>
   <h2 class="sentence" id="timeSentence">We can play together ___ lunch.</h2>
-  <p class="dutch-hint" id="timeHint">Dutch hint: na</p>
+  <p class="dutch-hint" id="timeHint">Nederlandse hint: na</p>
   <div class="chip-grid" id="timeAnswers"></div>
   <p class="feedback" id="timeFeedback" aria-live="polite"></p>
-  <button id="timeNext" class="primary-button next-button" type="button" hidden>Next →</button>
-</div>
-        </article>
+  <button id="timeNext" class="primary-button next-button" type="button" hidden>Volgende →</button>
+</div></article>
         <aside class="side-panel">
           <div class="side-section">
-            <div class="side-heading"><h2>Your progress</h2><span id="progressPercent">0%</span></div>
-            <div class="progress-track"><span id="progressBar"></span></div>
-            <p class="side-copy" id="progressMessage">Every correct answer moves an item closer to mastered.</p>
+            <div class="side-heading"><h2>Jouw voortgang</h2><span id="progressPercent">0%</span></div>
+            <div class="progress-track" aria-label="Voortgang"><span id="progressBar"></span></div>
+            <p class="side-copy" id="progressMessage">Elk goed antwoord vult je voortgang een stap verder.</p>
           </div>
           <div class="tip-box">
             <span class="tip-icon">✦</span>
-            <p id="modeTip"><strong>Tip:</strong> Say the answer out loud before choosing.</p>
+            <p id="modeTip"><strong>Tip:</strong> Zeg je antwoord hardop voordat je kiest.</p>
           </div>
-          <a class="switch-mode-link" href="index.html">Choose another mode →</a>
+          <a class="switch-mode-link" href="index.html">Andere oefenvorm kiezen →</a>
         </aside>
       </section>
     </main>
 
-    <footer><span>EnglishLab</span><span>Time challenge mode</span></footer>
+    <footer><span>EnglishLab</span><span>Tijdwoorden</span></footer>
   </div>
   <script src="app.js"></script>
 </body>

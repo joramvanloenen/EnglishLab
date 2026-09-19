@@ -1,90 +1,88 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#6f5be7">
-  <meta name="description" content="EnglishLab Type">
-  <title>EnglishLab — Type</title>
+  <meta name="description" content="EnglishLab — Typen">
+  <title>EnglishLab — Typen</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="practice-page" data-mode="type">
   <div class="page-shell">
     <header class="topbar">
-      <a class="brand" href="index.html"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
-      <div class="lesson-pill">Nice to meet you <span>•</span> Lesson 2</div>
+      <a class="brand" href="index.html" aria-label="EnglishLab startpagina"><span class="brand-mark">EL</span><span>EnglishLab</span></a>
+      <div class="lesson-pill">Nice to meet you <span>•</span> Les 2</div>
     </header>
 
     <main>
       <section class="practice-page-header">
-        <a class="back-link" href="index.html">← Back to practice modes</a>
+        <a class="back-link" href="index.html">← Terug naar oefenvormen</a>
         <div class="practice-title-row">
           <div>
-            <p class="eyebrow">03 · Practice mode</p>
-            <h1>Type</h1>
-            <p>No multiple choice — pull the answer from memory.</p>
+            <p class="eyebrow">03 · Oefenvorm</p>
+            <h1>Typen</h1>
+            <p>Geen meerkeuze: typ de vertaling zelf.</p>
           </div>
           <div class="mini-stats">
-            <div><strong id="masteredCount">0</strong><span>mastered</span></div>
-            <div><strong id="sessionScore">0/0</strong><span>this session</span></div>
-            <div><strong id="streakCount">0</strong><span>streak</span></div>
+            <div><strong id="masteredCount">0</strong><span>beheerst</span></div>
+            <div><strong id="sessionScore">0/0</strong><span>deze ronde</span></div>
+            <div><strong id="streakCount">0</strong><span>reeks</span></div>
           </div>
         </div>
       </section>
 
-      <section class="controls practice-controls" aria-label="Practice controls">
+      <section class="controls practice-controls" aria-label="Oefeninstellingen">
         <div class="control-group">
-          <label for="categorySelect">Practice</label>
+          <label for="categorySelect">Oefenen</label>
           <select id="categorySelect">
-            <option value="all">Everything</option>
-            <option value="words">Words</option>
-            <option value="phrases">Phrases</option>
-            <option value="time">Time prepositions</option>
-            <option value="mistakes">My mistakes</option>
+            <option value="all">Alles</option>
+            <option value="words">Woorden</option>
+            <option value="phrases">Zinnen</option>
+            <option value="time">Tijdwoorden</option>
+            <option value="mistakes">Mijn fouten</option>
           </select>
         </div>
         <div class="control-group">
-          <label for="directionSelect">Direction</label>
+          <label for="directionSelect">Richting</label>
           <select id="directionSelect">
-            <option value="mix">Mix both ways</option>
-            <option value="en-nl">English → Dutch</option>
-            <option value="nl-en">Dutch → English</option>
+            <option value="mix">Door elkaar</option>
+            <option value="en-nl">Engels → Nederlands</option>
+            <option value="nl-en">Nederlands → Engels</option>
           </select>
         </div>
       </section>
 
       <section class="single-practice-layout">
         <article class="practice-card">
-          
 <div id="typeMode" class="mode-panel">
-  <div class="card-topline"><span class="category-badge" id="typeCategory">Word</span><span class="counter" id="typeCounter">Type the answer</span></div>
-  <p class="question-kicker" id="typePromptLabel">Translate into Dutch</p>
+  <div class="card-topline"><span class="category-badge" id="typeCategory">Woord</span><span class="counter" id="typeCounter">Typ het antwoord</span></div>
+  <p class="question-kicker" id="typePromptLabel">Vertaal naar het Nederlands</p>
   <h2 class="question" id="typePrompt">colour</h2>
   <form id="typeForm" class="type-form" autocomplete="off">
-    <label class="sr-only" for="typeAnswer">Your answer</label>
-    <input id="typeAnswer" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type your answer…">
-    <button class="primary-button" type="submit">Check</button>
+    <label class="sr-only" for="typeAnswer">Jouw antwoord</label>
+    <input id="typeAnswer" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Typ je antwoord…">
+    <button class="primary-button" type="submit">Controleren</button>
   </form>
   <p class="feedback" id="typeFeedback" aria-live="polite"></p>
-  <button id="typeNext" class="primary-button next-button" type="button" hidden>Next →</button>
-</div>
-        </article>
+  <button id="typeNext" class="primary-button next-button" type="button" hidden>Volgende →</button>
+</div></article>
         <aside class="side-panel">
           <div class="side-section">
-            <div class="side-heading"><h2>Your progress</h2><span id="progressPercent">0%</span></div>
-            <div class="progress-track"><span id="progressBar"></span></div>
-            <p class="side-copy" id="progressMessage">Every correct answer moves an item closer to mastered.</p>
+            <div class="side-heading"><h2>Jouw voortgang</h2><span id="progressPercent">0%</span></div>
+            <div class="progress-track" aria-label="Voortgang"><span id="progressBar"></span></div>
+            <p class="side-copy" id="progressMessage">Elk goed antwoord vult je voortgang een stap verder.</p>
           </div>
           <div class="tip-box">
             <span class="tip-icon">✦</span>
-            <p id="modeTip"><strong>Tip:</strong> Say the answer out loud before choosing.</p>
+            <p id="modeTip"><strong>Tip:</strong> Zeg je antwoord hardop voordat je kiest.</p>
           </div>
-          <a class="switch-mode-link" href="index.html">Choose another mode →</a>
+          <a class="switch-mode-link" href="index.html">Andere oefenvorm kiezen →</a>
         </aside>
       </section>
     </main>
 
-    <footer><span>EnglishLab</span><span>Type mode</span></footer>
+    <footer><span>EnglishLab</span><span>Typen</span></footer>
   </div>
   <script src="app.js"></script>
 </body>

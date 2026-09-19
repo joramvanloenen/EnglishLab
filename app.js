@@ -36,31 +36,50 @@ const ITEMS = [
   {id:'until',category:'time',en:['until'],enDisplay:'until',nl:['tot'],example:'They stayed until the end of the concert.'}
 ];
 
-const STORAGE_KEY = 'englishlab-progress-v2';
-const CATEGORY_LABELS = {words:'Word',phrases:'Phrase',time:'Time word'};
-const $ = function(s){return document.querySelector(s);};
-const pageMode = document.body.dataset.mode || 'home';
+const STORAGE_KEY='englishlab-progress-v2';
+const OLD_STORAGE_KEY='englishlab-progress-v1';
+const CATEGORY_LABELS={words:'Woord',phrases:'Zin',time:'Tijdwoord'};
+const $=function(s){return document.querySelector(s);};
+const pageMode=document.body.dataset.mode||'home';
 
-let progress = loadProgress();
-let sessionCorrect = 0;
-let sessionAttempts = 0;
-let streak = 0;
-let currentItem = null;
-let currentDirection = 'en-nl';
-let revealed = false;
-let answered = false;
+let progress=loadProgress();
+let sessionCorrect=0;
+let sessionAttempts=0;
+let currentItem=null;
+let currentDirection='en-nl';
+let revealed=false;
+let answered=false;
 
 function loadProgress(){
+  let data={};
   try{
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  }catch(e){return {};}
+    data=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')||{};
+    const hasAnswers=Object.keys(data).some(function(k){return k!=='_meta';});
+    if(!hasAnswers){
+      const old=JSON.parse(localStorage.getItem(OLD_STORAGE_KEY)||'{}')||{};
+      if(Object.keys(old).length) data=old;
+    }
+  }catch(e){data={};}
+  if(!data._meta) data._meta={streak:0};
+  ITEMS.forEach(function(item){
+    const p=data[item.id];
+    if(p&&typeof p.level!=='number'){
+      p.level=Math.max(0,Math.min(3,(p.correct||0)-(p.wrong||0)));
+    }
+  });
+  return data;
 }
-
 function saveProgress(){
   try{localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));}catch(e){}
 }
-
+function ensureState(item){
+  if(!progress[item.id]) progress[item.id]={correct:0,wrong:0,level:0};
+  const p=progress[item.id];
+  if(typeof p.correct!=='number') p.correct=0;
+  if(typeof p.wrong!=='number') p.wrong=0;
+  if(typeof p.level!=='number') p.level=Math.max(0,Math.min(3,p.correct-p.wrong));
+  return p;
+}
 function shuffle(list){
   const copy=list.slice();
   for(let i=copy.length-1;i>0;i--){
@@ -69,28 +88,26 @@ function shuffle(list){
   }
   return copy;
 }
-
 function normalize(value){
   return String(value||'').toLowerCase().normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'').replace(/[’']/g,'')
     .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
 }
-
 function displayEn(item){return item.enDisplay||item.en[0];}
 function displayNl(item){return item.nl[0];}
-function stateFor(item){return progress[item.id]||{correct:0,wrong:0};}
-function isMastered(item){
-  const p=stateFor(item);
-  return p.correct>=3 && p.correct-p.wrong>=2;
-}
+function stateFor(item){return ensureState(item);}
+function isMastered(item){return stateFor(item).level>=3;}
 function totalAttempts(){
-  return Object.values(progress).reduce(function(sum,p){return sum+(p.correct||0)+(p.wrong||0);},0);
+  return ITEMS.reduce(function(sum,item){const p=stateFor(item);return sum+p.correct+p.wrong;},0);
 }
 function totalCorrect(){
-  return Object.values(progress).reduce(function(sum,p){return sum+(p.correct||0);},0);
+  return ITEMS.reduce(function(sum,item){return sum+stateFor(item).correct;},0);
+}
+function learningSteps(){
+  return ITEMS.reduce(function(sum,item){return sum+stateFor(item).level;},0);
 }
 function getMistakes(){
-  return ITEMS.filter(function(item){const p=stateFor(item);return p.wrong>0&&!isMastered(item);});
+  return ITEMS.filter(function(item){const p=stateFor(item);return p.wrong>0&&p.level<3;});
 }
 function getPool(){
   const select=$('#categorySelect');
@@ -111,7 +128,7 @@ function pickItem(forcedCategory){
     if(categorySelect) categorySelect.value='all';
     pool=ITEMS.slice();
     const msg=$('#progressMessage');
-    if(msg) msg.textContent='No mistakes waiting for review. Nice work!';
+    if(msg) msg.textContent='Je hebt geen openstaande fouten. Lekker bezig!';
   }
   if(pool.length===1) return pool[0];
   let next=pool[Math.floor(Math.random()*pool.length)];
@@ -123,14 +140,16 @@ function pickItem(forcedCategory){
   return next;
 }
 function recordResult(item,correct){
-  if(!progress[item.id]) progress[item.id]={correct:0,wrong:0};
+  const p=ensureState(item);
   if(correct){
-    progress[item.id].correct++;
+    p.correct++;
+    p.level=Math.min(3,p.level+1);
     sessionCorrect++;
-    streak++;
+    progress._meta.streak=(progress._meta.streak||0)+1;
   }else{
-    progress[item.id].wrong++;
-    streak=0;
+    p.wrong++;
+    p.level=Math.max(0,p.level-1);
+    progress._meta.streak=0;
   }
   sessionAttempts++;
   saveProgress();
@@ -138,10 +157,13 @@ function recordResult(item,correct){
 }
 function updateStats(){
   const mastered=ITEMS.filter(isMastered).length;
-  const percent=Math.round(mastered/ITEMS.length*100);
+  const steps=learningSteps();
+  const maxSteps=ITEMS.length*3;
+  const percent=Math.round(steps/maxSteps*100);
+
   if($('#masteredCount')) $('#masteredCount').textContent=String(mastered);
   if($('#sessionScore')) $('#sessionScore').textContent=sessionCorrect+'/'+sessionAttempts;
-  if($('#streakCount')) $('#streakCount').textContent=String(streak);
+  if($('#streakCount')) $('#streakCount').textContent=String(progress._meta.streak||0);
   if($('#progressPercent')) $('#progressPercent').textContent=percent+'%';
   if($('#progressBar')) $('#progressBar').style.width=percent+'%';
   if($('#attemptCount')) $('#attemptCount').textContent=String(totalAttempts());
@@ -150,13 +172,15 @@ function updateStats(){
     $('#accuracyCount').textContent=attempts?Math.round(totalCorrect()/attempts*100)+'%':'—';
   }
   if($('#progressMessage')){
-    if(mastered===ITEMS.length) $('#progressMessage').textContent='Everything mastered. Very suspiciously excellent.';
-    else if(mastered>=20) $('#progressMessage').textContent='Great momentum — most of the lesson is sticking.';
-    else if(mastered>0) $('#progressMessage').textContent='Keep going: 3 solid correct answers can master an item.';
+    if(mastered===ITEMS.length){
+      $('#progressMessage').textContent='Alles beheerst. Tijd om verdacht zelfverzekerd Engels te spreken.';
+    }else{
+      $('#progressMessage').textContent='Voortgang: '+steps+' van '+maxSteps+' leerstappen. Elk goed antwoord telt direct mee.';
+    }
   }
 }
 function positiveMessage(){
-  const list=['Correct!','Nice one!','Yes — nailed it.','Spot on!','That’s it!'];
+  const list=['Goed!','Lekker!','Ja, die is goed.','Precies!','Helemaal goed!'];
   return list[Math.floor(Math.random()*list.length)];
 }
 
@@ -166,8 +190,8 @@ function renderLearn(){
   revealed=false;answered=false;
   const enPrompt=currentDirection==='en-nl';
   $('#learnCategory').textContent=CATEGORY_LABELS[currentItem.category];
-  $('#learnCounter').textContent=getPool().length+' in set';
-  $('#flashPromptLabel').textContent=enPrompt?'English':'Dutch';
+  $('#learnCounter').textContent=getPool().length+' in deze set';
+  $('#flashPromptLabel').textContent=enPrompt?'Engels':'Nederlands';
   $('#flashPrompt').textContent=enPrompt?displayEn(currentItem):displayNl(currentItem);
   $('#flashAnswer').textContent=enPrompt?displayNl(currentItem):displayEn(currentItem);
   $('#flashAnswer').hidden=true;
@@ -179,7 +203,6 @@ function revealLearn(){
   $('#tapHint').hidden=true;
 }
 function finishLearn(correct){
-  if(!revealed){revealLearn();return;}
   if(answered) return;
   answered=true;
   recordResult(currentItem,correct);
@@ -196,7 +219,9 @@ function speakCurrent(){
 function buildQuizOptions(item,direction){
   let candidates=ITEMS.filter(function(o){return o.id!==item.id&&o.category===item.category;});
   if(candidates.length<3) candidates=ITEMS.filter(function(o){return o.id!==item.id;});
-  const options=shuffle(candidates).slice(0,3).map(function(o){return direction==='en-nl'?displayNl(o):displayEn(o);});
+  const options=shuffle(candidates).slice(0,3).map(function(o){
+    return direction==='en-nl'?displayNl(o):displayEn(o);
+  });
   options.push(direction==='en-nl'?displayNl(item):displayEn(item));
   return shuffle(options);
 }
@@ -207,8 +232,8 @@ function renderQuiz(){
   const enPrompt=currentDirection==='en-nl';
   const correct=enPrompt?displayNl(currentItem):displayEn(currentItem);
   $('#quizCategory').textContent=CATEGORY_LABELS[currentItem.category];
-  $('#quizCounter').textContent=getPool().length+' in set';
-  $('#quizPromptLabel').textContent=enPrompt?'What does this mean in Dutch?':'What is this in English?';
+  $('#quizCounter').textContent=getPool().length+' in deze set';
+  $('#quizPromptLabel').textContent=enPrompt?'Wat betekent dit in het Nederlands?':'Wat is dit in het Engels?';
   $('#quizPrompt').textContent=enPrompt?displayEn(currentItem):displayNl(currentItem);
   $('#quizFeedback').textContent='';$('#quizFeedback').className='feedback';
   $('#quizNext').hidden=true;
@@ -226,7 +251,7 @@ function renderQuiz(){
         if(normalize(child.textContent)===normalize(correct)) child.classList.add('correct');
       });
       if(!ok) b.classList.add('wrong');
-      $('#quizFeedback').textContent=ok?positiveMessage():'Almost — the answer is “'+correct+'”.';
+      $('#quizFeedback').textContent=ok?positiveMessage():'Bijna — het juiste antwoord is “'+correct+'”.';
       $('#quizFeedback').className='feedback '+(ok?'good':'bad');
       $('#quizNext').hidden=false;
     });
@@ -240,8 +265,8 @@ function renderType(){
   answered=false;
   const enPrompt=currentDirection==='en-nl';
   $('#typeCategory').textContent=CATEGORY_LABELS[currentItem.category];
-  $('#typeCounter').textContent=getPool().length+' in set';
-  $('#typePromptLabel').textContent=enPrompt?'Translate into Dutch':'Translate into English';
+  $('#typeCounter').textContent=getPool().length+' in deze set';
+  $('#typePromptLabel').textContent=enPrompt?'Vertaal naar het Nederlands':'Vertaal naar het Engels';
   $('#typePrompt').textContent=enPrompt?displayEn(currentItem):displayNl(currentItem);
   $('#typeAnswer').value='';$('#typeAnswer').disabled=false;$('#typeAnswer').className='';
   $('#typeFeedback').textContent='';$('#typeFeedback').className='feedback';
@@ -253,7 +278,7 @@ function checkTyped(event){
   if(answered) return;
   const input=$('#typeAnswer');
   if(!normalize(input.value)){
-    $('#typeFeedback').textContent='Type an answer first.';
+    $('#typeFeedback').textContent='Typ eerst een antwoord.';
     $('#typeFeedback').className='feedback bad';
     return;
   }
@@ -262,11 +287,10 @@ function checkTyped(event){
   const correct=currentDirection==='en-nl'?displayNl(currentItem):displayEn(currentItem);
   answered=true;input.disabled=true;input.classList.add(ok?'correct':'wrong');
   recordResult(currentItem,ok);
-  $('#typeFeedback').textContent=ok?positiveMessage():'The answer is “'+correct+'”.';
+  $('#typeFeedback').textContent=ok?positiveMessage():'Het juiste antwoord is “'+correct+'”.';
   $('#typeFeedback').className='feedback '+(ok?'good':'bad');
   $('#typeNext').hidden=false;
 }
-
 function blankExample(item){
   return item.example.replace(new RegExp('\\b'+displayEn(item)+'\\b','i'),'___');
 }
@@ -274,7 +298,7 @@ function renderTime(){
   currentItem=pickItem('time');
   answered=false;
   $('#timeSentence').textContent=blankExample(currentItem);
-  $('#timeHint').textContent='Dutch hint: '+displayNl(currentItem);
+  $('#timeHint').textContent='Nederlandse hint: '+displayNl(currentItem);
   $('#timeFeedback').textContent='';$('#timeFeedback').className='feedback';
   $('#timeNext').hidden=true;
   const holder=$('#timeAnswers');holder.innerHTML='';
@@ -291,7 +315,7 @@ function renderTime(){
         if(normalize(child.textContent)===normalize(displayEn(currentItem))) child.classList.add('correct');
       });
       if(!ok) b.classList.add('wrong');
-      $('#timeFeedback').textContent=ok?positiveMessage():'The missing word is “'+displayEn(currentItem)+'”.';
+      $('#timeFeedback').textContent=ok?positiveMessage():'Het ontbrekende woord is “'+displayEn(currentItem)+'”.';
       $('#timeFeedback').className='feedback '+(ok?'good':'bad');
       $('#timeNext').hidden=false;
     });
@@ -303,18 +327,19 @@ function wireSharedControls(render){
   if($('#categorySelect')) $('#categorySelect').addEventListener('change',function(){
     if(this.value==='mistakes'&&getMistakes().length===0){
       this.value='all';
-      if($('#progressMessage')) $('#progressMessage').textContent='No mistakes waiting for review. Nice work!';
+      if($('#progressMessage')) $('#progressMessage').textContent='Je hebt geen openstaande fouten. Lekker bezig!';
     }
     render();
   });
   if($('#directionSelect')) $('#directionSelect').addEventListener('change',render);
 }
-
 function initHome(){
   updateStats();
   if($('#resetProgress')) $('#resetProgress').addEventListener('click',function(){
-    if(!window.confirm('Reset all saved EnglishLab progress on this device?')) return;
-    progress={};saveProgress();updateStats();
+    if(!window.confirm('Weet je zeker dat je alle opgeslagen voortgang op dit apparaat wilt wissen?')) return;
+    progress={_meta:{streak:0}};
+    sessionCorrect=0;sessionAttempts=0;
+    saveProgress();updateStats();
   });
 }
 function initLearn(){
@@ -323,25 +348,25 @@ function initLearn(){
   $('#againButton').addEventListener('click',function(){finishLearn(false);});
   $('#gotItButton').addEventListener('click',function(){finishLearn(true);});
   $('#speakButton').addEventListener('click',speakCurrent);
-  $('#modeTip').innerHTML='<strong>Tip:</strong> Say the English word out loud before revealing the answer.';
+  $('#modeTip').innerHTML='<strong>Tip:</strong> Zeg het Engelse woord hardop voordat je het antwoord bekijkt.';
   updateStats();renderLearn();
 }
 function initQuiz(){
   wireSharedControls(renderQuiz);
   $('#quizNext').addEventListener('click',renderQuiz);
-  $('#modeTip').innerHTML='<strong>Tip:</strong> Try to answer before reading all four choices.';
+  $('#modeTip').innerHTML='<strong>Tip:</strong> Bedenk eerst zelf het antwoord en kijk daarna pas naar de vier keuzes.';
   updateStats();renderQuiz();
 }
 function initType(){
   wireSharedControls(renderType);
   $('#typeForm').addEventListener('submit',checkTyped);
   $('#typeNext').addEventListener('click',renderType);
-  $('#modeTip').innerHTML='<strong>Tip:</strong> Spelling matters here — this is the strongest recall test.';
+  $('#modeTip').innerHTML='<strong>Tip:</strong> Hier telt de spelling mee. Dit is de beste test of je het woord echt kent.';
   updateStats();renderType();
 }
 function initTime(){
   $('#timeNext').addEventListener('click',renderTime);
-  $('#modeTip').innerHTML='<strong>Tip:</strong> Read the whole sentence aloud. The rhythm often helps.';
+  $('#modeTip').innerHTML='<strong>Tip:</strong> Lees de hele Engelse zin hardop. Het ritme helpt vaak bij de keuze.';
   updateStats();renderTime();
 }
 
