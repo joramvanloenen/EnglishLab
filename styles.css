@@ -646,3 +646,180 @@ footer span:first-child{font-weight:950;color:var(--ink)}
   .toy-card-buy{align-items:flex-end;flex-direction:column}
   .toy-buy-button{width:100%}
 }
+
+
+/* Stronger interaction affordances: clickable things should look clickable. */
+button:not(:disabled),
+select,
+a.mode-card,
+.back-link,
+.switch-mode-link,
+.player-name-button,
+.flashcard{cursor:pointer}
+
+button:disabled{cursor:not-allowed}
+
+/* Raised tactile buttons. */
+.primary-button,
+.secondary-button,
+.ghost-button,
+.speak-button,
+.answer-button,
+.chip-button,
+.toy-buy-button,
+.player-name-button,
+.back-link,
+.switch-mode-link{
+  transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease,background .12s ease;
+}
+.primary-button{
+  box-shadow:0 4px 0 #c85b3d,0 8px 18px rgba(230,110,73,.16);
+}
+.secondary-button,
+.speak-button,
+.ghost-button,
+.player-name-button,
+.back-link,
+.switch-mode-link{
+  border-width:2px;
+  box-shadow:0 3px 0 #d8d0c5,0 7px 14px rgba(60,42,31,.07);
+}
+.answer-button,
+.chip-button{
+  position:relative;
+  border:2px solid #d7d0e5;
+  background:#fff;
+  box-shadow:0 4px 0 #d7d0e5,0 8px 18px rgba(48,39,82,.07);
+}
+.answer-button:hover,
+.chip-button:hover{
+  border-color:var(--purple);
+  box-shadow:0 4px 0 #5e4ed0,0 9px 20px rgba(79,65,181,.12);
+}
+.toy-buy-button:not(:disabled){
+  box-shadow:0 3px 0 #c85b3d,0 7px 14px rgba(230,110,73,.14);
+}
+
+/* Physical press feedback works on touch as well as mouse. */
+.primary-button:not(:disabled):active,
+.secondary-button:not(:disabled):active,
+.ghost-button:not(:disabled):active,
+.speak-button:not(:disabled):active,
+.answer-button:not(:disabled):active,
+.chip-button:not(:disabled):active,
+.toy-buy-button:not(:disabled):active,
+.player-name-button:not(:disabled):active,
+.back-link:active,
+.switch-mode-link:active{
+  transform:translateY(3px);
+  box-shadow:0 1px 0 rgba(70,55,45,.28);
+}
+
+/* The complete home mode card is a large button. */
+.mode-card{
+  border:2px solid #ded7ec;
+  box-shadow:0 6px 0 #ded7ec,0 14px 28px rgba(48,39,82,.08);
+}
+.mode-card:hover{
+  transform:translateY(-2px);
+  border-color:var(--purple);
+  box-shadow:0 7px 0 #6455cf,0 16px 32px rgba(79,65,181,.13);
+}
+.mode-card:active{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #6455cf,0 6px 12px rgba(79,65,181,.09);
+}
+.mode-go{
+  padding:8px 12px;
+  border-radius:11px;
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 3px 0 #c85b3d;
+}
+
+/* Flashcards now read as something you can tap, not just a panel. */
+.flashcard{
+  position:relative;
+  border:2px solid #dfd6f0;
+  box-shadow:0 5px 0 #dfd6f0,0 12px 25px rgba(48,39,82,.07);
+}
+.flashcard:hover{
+  border-color:var(--purple);
+  box-shadow:0 6px 0 #6455cf,0 15px 28px rgba(79,65,181,.10);
+}
+.flashcard:active{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #6455cf;
+}
+.tap-hint{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:6px;
+  padding:6px 10px;
+  border:1px solid #ded6e9;
+  border-radius:999px;
+  background:#fff;
+}
+.tap-hint::before{content:"☝";font-size:.9rem}
+
+/* Selects should visually communicate that they open. */
+.control-group select{
+  border:2px solid #ded7ec;
+  box-shadow:0 3px 0 #ded7ec;
+  cursor:pointer;
+}
+.control-group select:hover{border-color:var(--purple)}
+.control-group select:active{transform:translateY(1px);box-shadow:0 1px 0 #ded7ec}
+
+/* Links that perform navigation look like compact buttons. */
+.switch-mode-link{
+  text-align:center;
+  border:2px solid #ded7ec;
+  background:#fff;
+}
+.back-link{
+  padding:0 10px;
+  border:2px solid var(--line);
+  background:#fff;
+  border-radius:11px;
+}
+.brand{cursor:pointer}
+
+/* Clear disabled state. */
+.answer-button:disabled,
+.chip-button:disabled,
+.toy-buy-button:disabled,
+.primary-button:disabled,
+.secondary-button:disabled{
+  box-shadow:none;
+}
+.answer-button:disabled:not(.correct):not(.wrong),
+.chip-button:disabled:not(.correct):not(.wrong){opacity:.62}
+
+/* Store cards are information; only the buy button is actionable. */
+.toy-card{cursor:default}
+.toy-card:not(.owned):has(.toy-buy-button:not(:disabled)){
+  border-color:#e2c56e;
+  box-shadow:0 3px 0 #ead792;
+}
+
+@media(max-width:680px){
+  /* Stronger mobile affordances where hover cannot help. */
+  .mode-card{
+    border-width:2px;
+    box-shadow:0 5px 0 #d9d1e7,0 10px 20px rgba(48,39,82,.07);
+  }
+  .mode-go{display:inline-flex;padding:8px 11px}
+  .answer-button,.chip-button{
+    min-height:64px;
+    border-width:2px;
+    box-shadow:0 4px 0 #d7d0e5;
+  }
+  .primary-button,.secondary-button{min-height:54px}
+  .control-group select{
+    border-width:2px;
+    box-shadow:0 3px 0 #ded7ec;
+  }
+  .flashcard{box-shadow:0 5px 0 #dfd6f0}
+}
