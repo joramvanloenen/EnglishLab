@@ -603,8 +603,28 @@ function wireSharedControls(render){
   });
   if($('#directionSelect'))$('#directionSelect').addEventListener('change',render);
 }
+function repositionRewardPanel(){
+  const panel=$('.bone-panel');
+  const card=$('.practice-card');
+  const dog=$('.dog-coach');
+  const side=$('.side-panel');
+  if(!panel||!card||!dog||!side)return;
+
+  if(window.matchMedia('(max-width: 680px)').matches){
+    if(panel.parentElement!==card || panel.previousElementSibling!==dog){
+      card.insertBefore(panel,dog.nextSibling);
+    }
+  }else{
+    if(panel.parentElement!==side || panel!==side.firstElementChild){
+      side.insertBefore(panel,side.firstElementChild);
+    }
+  }
+}
+
 function initCommon(){
+  repositionRewardPanel();
   updateStats();updateBoneUI();setupBoneDrag();
+  window.addEventListener('resize',repositionRewardPanel,{passive:true});
   const zone=$('#dogDropZone');
   if(zone){
     zone.addEventListener('click',()=>{
