@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#6f5be7">
+  <meta name="theme-color" content="#ff8b63">
   <meta name="description" content="EnglishLab oefenen — Nice to meet you, les 2">
-  <title>EnglishLab — Nice to meet you</title>
+  <title>EnglishLab — Oefenen met Pip</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="home-page">
@@ -19,67 +19,74 @@
     </header>
 
     <main>
-      <section class="hero home-hero">
+      <section class="hero home-hero dog-home-hero">
         <div>
-          <p class="eyebrow">Myles Smith · Lied 1</p>
-          <h1>Kies hoe je<br><span>wilt oefenen.</span></h1>
-          <p class="hero-copy">Kies hieronder een oefenvorm. Elke oefening opent op een eigen rustige pagina en je voortgang wordt overal bijgehouden.</p>
+          <p class="eyebrow">Oefenen met Pip</p>
+          <h1>Engels leren?<br><span>Pip helpt mee.</span></h1>
+          <p class="hero-copy">Kies een oefenvorm. Na elke twee goede antwoorden verdien je een botje. Sleep het naar Pip en kijk wat er gebeurt.</p>
+          <div class="hero-stats" aria-label="Voortgang">
+            <div class="stat"><span class="stat-value" id="masteredCount">0</span><span class="stat-label">beheerst</span></div>
+            <div class="stat"><span class="stat-value" id="attemptCount">0</span><span class="stat-label">antwoorden</span></div>
+            <div class="stat"><span class="stat-value" id="boneHomeCount">0</span><span class="stat-label">botjes</span></div>
+          </div>
         </div>
-        <div class="hero-stats" aria-label="Voortgang">
-          <div class="stat"><span class="stat-value" id="masteredCount">0</span><span class="stat-label">beheerst</span></div>
-          <div class="stat"><span class="stat-value" id="attemptCount">0</span><span class="stat-label">antwoorden</span></div>
-          <div class="stat"><span class="stat-value" id="accuracyCount">—</span><span class="stat-label">goed</span></div>
+        <div class="home-dog-wrap">
+          
+<div class="dog-coach" aria-live="polite">
+  <div id="dogDropZone" class="dog-avatar-wrap" aria-label="Sleep een botje naar Pip">
+    <div class="heart-pop" id="heartPop" aria-hidden="true">♥</div>
+    <div class="dog-avatar" aria-hidden="true">
+      <span class="ear ear-left"></span><span class="ear ear-right"></span>
+      <span class="dog-face">
+        <span class="eye eye-left"></span><span class="eye eye-right"></span>
+        <span class="brow brow-left"></span><span class="brow brow-right"></span>
+        <span class="muzzle"></span><span class="nose"></span><span class="mouth"></span><span class="tongue"></span>
+        <span class="spot"></span>
+      </span>
+    </div>
+    <span class="dog-shadow"></span>
+  </div>
+  <div class="dog-bubble">
+    <span class="dog-name">Pip zegt</span>
+    <p id="dogSpeech">Woef! Klaar om te oefenen?</p>
+  </div>
+</div>
+          <div class="home-bone-strip">
+            <span>Botjes in je mandje</span>
+            <strong>🦴 <span id="boneCount">0</span></strong>
+          </div>
         </div>
       </section>
 
       <section class="home-grid" aria-label="Oefenvormen">
         <a class="mode-card mode-learn" href="learn.html">
-          <div class="mode-number">01</div>
-          <div class="mode-icon">↻</div>
+          <div class="mode-number">01</div><div class="mode-icon">↻</div>
           <h2>Leren</h2>
-          <p>Draai kaartjes om, luister naar de Engelse uitspraak en geef aan wat je al kent.</p>
+          <p>Pip laat een woord zien. Draai het kaartje om en vertel of je het wist.</p>
           <span class="mode-go">Begin met leren →</span>
         </a>
-
         <a class="mode-card mode-quiz" href="quiz.html">
-          <div class="mode-number">02</div>
-          <div class="mode-icon">?</div>
+          <div class="mode-number">02</div><div class="mode-icon">?</div>
           <h2>Quiz</h2>
-          <p>Kies de juiste vertaling uit vier antwoorden en probeer een lange reeks goed te krijgen.</p>
+          <p>Pip stelt de vraag, jij kiest de juiste vertaling uit vier antwoorden.</p>
           <span class="mode-go">Start de quiz →</span>
         </a>
-
         <a class="mode-card mode-type" href="type.html">
-          <div class="mode-number">03</div>
-          <div class="mode-icon">Aa</div>
+          <div class="mode-number">03</div><div class="mode-icon">Aa</div>
           <h2>Typen</h2>
-          <p>Geen meerkeuze: haal het antwoord zelf uit je geheugen. Zo merk je wat echt blijft hangen.</p>
+          <p>Geen meerkeuze. Typ het antwoord zelf en laat Pip zien wat je kunt.</p>
           <span class="mode-go">Begin met typen →</span>
         </a>
-
         <a class="mode-card mode-time" href="time.html">
-          <div class="mode-number">04</div>
-          <div class="mode-icon">⏱</div>
+          <div class="mode-number">04</div><div class="mode-icon">⏱</div>
           <h2>Tijdwoorden</h2>
-          <p>Oefen after, at, before, during, on en until in complete Engelse zinnen.</p>
+          <p>Vul after, at, before, during, on of until in op de juiste plek.</p>
           <span class="mode-go">Start de uitdaging →</span>
         </a>
       </section>
-
-      <section class="lesson-overview">
-        <div>
-          <p class="eyebrow">Deze les</p>
-          <h2>33 dingen om te leren</h2>
-        </div>
-        <div class="overview-pills">
-          <span><b>19</b> woorden</span>
-          <span><b>8</b> zinnen</span>
-          <span><b>6</b> tijdwoorden</span>
-        </div>
-      </section>
     </main>
 
-    <footer><span>EnglishLab</span><span>Oefenen zonder gedoe.</span></footer>
+    <footer><span>EnglishLab</span><span>Pip bewaakt de botjes.</span></footer>
   </div>
   <script src="app.js"></script>
 </body>

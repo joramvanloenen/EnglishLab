@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#6f5be7">
+  <meta name="theme-color" content="#ff8b63">
   <meta name="description" content="EnglishLab — Quiz">
   <title>EnglishLab — Quiz</title>
   <link rel="stylesheet" href="styles.css">
@@ -20,9 +20,9 @@
         <a class="back-link" href="index.html">← Terug naar oefenvormen</a>
         <div class="practice-title-row">
           <div>
-            <p class="eyebrow">02 · Oefenvorm</p>
+            <p class="eyebrow">02 · Oefenen met Pip</p>
             <h1>Quiz</h1>
-            <p>Kies de juiste vertaling uit vier mogelijkheden.</p>
+            <p>Pip stelt de vraag. Jij kiest het beste antwoord.</p>
           </div>
           <div class="mini-stats">
             <div><strong id="masteredCount">0</strong><span>beheerst</span></div>
@@ -55,6 +55,27 @@
 
       <section class="single-practice-layout">
         <article class="practice-card">
+          
+<div class="dog-coach" aria-live="polite">
+  <div id="dogDropZone" class="dog-avatar-wrap" aria-label="Sleep een botje naar Pip">
+    <div class="heart-pop" id="heartPop" aria-hidden="true">♥</div>
+    <div class="dog-avatar" aria-hidden="true">
+      <span class="ear ear-left"></span><span class="ear ear-right"></span>
+      <span class="dog-face">
+        <span class="eye eye-left"></span><span class="eye eye-right"></span>
+        <span class="brow brow-left"></span><span class="brow brow-right"></span>
+        <span class="muzzle"></span><span class="nose"></span><span class="mouth"></span><span class="tongue"></span>
+        <span class="spot"></span>
+      </span>
+    </div>
+    <span class="dog-shadow"></span>
+  </div>
+  <div class="dog-bubble">
+    <span class="dog-name">Pip zegt</span>
+    <p id="dogSpeech">Woef! Klaar om te oefenen?</p>
+  </div>
+</div>
+          
 <div id="quizMode" class="mode-panel">
   <div class="card-topline"><span class="category-badge" id="quizCategory">Woord</span><span class="counter" id="quizCounter">Vraag</span></div>
   <p class="question-kicker" id="quizPromptLabel">Wat betekent dit?</p>
@@ -62,23 +83,40 @@
   <div class="answer-grid" id="quizAnswers"></div>
   <p class="feedback" id="quizFeedback" aria-live="polite"></p>
   <button id="quizNext" class="primary-button next-button" type="button" hidden>Volgende →</button>
-</div></article>
+</div>
+          <div class="reward-toast" id="rewardToast" hidden>+1 botje! 🦴</div>
+        </article>
+
         <aside class="side-panel">
+          
+<div class="bone-panel">
+  <div class="bone-panel-head">
+    <div>
+      <h2>Botjes voor Pip</h2>
+      <span>2 goede antwoorden = 1 botje</span>
+    </div>
+    <div class="bone-score">🦴 <strong id="boneCount">0</strong></div>
+  </div>
+  <div class="bone-meter" aria-label="Op weg naar het volgende botje">
+    <span id="boneProgress"></span>
+  </div>
+  <p id="boneHint">Nog <b id="answersToBone">2</b> goede antwoorden voor een botje.</p>
+  <button id="boneToken" class="bone-token" type="button" draggable="true" aria-label="Sleep dit botje naar Pip" disabled>
+    <span class="bone-emoji">🦴</span>
+    <span>Sleep naar Pip</span>
+  </button>
+</div>
           <div class="side-section">
             <div class="side-heading"><h2>Jouw voortgang</h2><span id="progressPercent">0%</span></div>
             <div class="progress-track" aria-label="Voortgang"><span id="progressBar"></span></div>
             <p class="side-copy" id="progressMessage">Elk goed antwoord vult je voortgang een stap verder.</p>
-          </div>
-          <div class="tip-box">
-            <span class="tip-icon">✦</span>
-            <p id="modeTip"><strong>Tip:</strong> Zeg je antwoord hardop voordat je kiest.</p>
           </div>
           <a class="switch-mode-link" href="index.html">Andere oefenvorm kiezen →</a>
         </aside>
       </section>
     </main>
 
-    <footer><span>EnglishLab</span><span>Quiz</span></footer>
+    <footer><span>EnglishLab</span><span>Pip zegt: woef!</span></footer>
   </div>
   <script src="app.js"></script>
 </body>
