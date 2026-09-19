@@ -95,6 +95,21 @@ const SLEEP_QUOTES=[
   'Zzz... Sophie, maak me wakker als er snacks zijn.',
   'Zzz... ik slaap niet. Ik oefen het Engelse woord “resting”.'
 ];
+const EAT_QUOTES=[
+  'HAP! Sophie, ik dacht dat dat een koekje was.',
+  'Nom nom... interface.',
+  'Oeps. Was die belangrijk?',
+  'Sophie... hij zag eruit als een snack.',
+  'Mmm. Knapperige pixels.',
+  'Ik heb ’m even geleend. Met mijn mond.'
+];
+const SPIT_QUOTES=[
+  'Blegh! Geen botje. Hier heb je ’m terug.',
+  'Oké Sophie, deze smaakte naar huiswerk.',
+  'Bwehh... veel te veel pixels.',
+  'Terug ermee. Ik prefereer botjes.',
+  'Prrft! Niet lekker. Jij mag ’m houden.'
+];
 
 let progress=loadProgress();
 let sessionCorrect=0;
@@ -108,6 +123,8 @@ let dragGhost=null;
 let sleepTimer=null;
 let wakeTimer=null;
 let dogSleeping=false;
+let uiEatTimer=null;
+let uiEating=false;
 
 function defaultMeta(){return {streak:0,bones:0,boneProgress:0};}
 function loadProgress(){
@@ -228,6 +245,81 @@ function dogQuestion(text){
   if(Math.random()<.35)sayDog(randomFrom(SOPHIE_ASK_QUOTES)+' '+text);
   else sayDog(text);
   scheduleDogNap();
+  scheduleUIMischief(.14);
+}
+function getEdibleUI(){
+  const selectors=pageMode==='home'
+    ? ['.mode-icon','.mode-number','.mode-go','.stat-label','.lesson-pill']
+    : ['.category-badge','.counter','.question-kicker','.dutch-hint','.speak-button','.control-group label','.feedback:not(:empty)'];
+  return selectors.flatMap(selector=>Array.from(document.querySelectorAll(selector))).filter(el=>{
+    if(!el||el.closest('.dog-coach')||el.classList.contains('pip-ui-missing'))return false;
+    const r=el.getBoundingClientRect();
+    const style=getComputedStyle(el);
+    return r.width>12&&r.height>8&&r.bottom>0&&r.top<innerHeight&&style.visibility!=='hidden'&&style.display!=='none';
+  });
+}
+function scheduleUIMischief(chance=.14,minDelay=900,maxDelay=2600){
+  if(uiEating||uiEatTimer||!$('#dogDropZone'))return;
+  if(Math.random()>chance)return;
+  uiEatTimer=setTimeout(()=>{
+    uiEatTimer=null;
+    eatRandomUI();
+  },minDelay+Math.random()*(maxDelay-minDelay));
+}
+function eatRandomUI(){
+  if(uiEating)return;
+  const candidates=getEdibleUI();
+  if(!candidates.length)return;
+  const target=randomFrom(candidates);
+  const zone=$('#dogDropZone');
+  const mouth=zone&&zone.querySelector('.mouth');
+  if(!zone||!mouth)return;
+
+  wakeDog();
+  uiEating=true;
+
+  const start=target.getBoundingClientRect();
+  const end=mouth.getBoundingClientRect();
+  const clone=target.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+  clone.setAttribute('aria-hidden','true');
+  clone.classList.add('pip-eaten-clone');
+  clone.style.left=start.left+'px';
+  clone.style.top=start.top+'px';
+  clone.style.width=start.width+'px';
+  clone.style.height=start.height+'px';
+  clone.style.transform='translate(0,0) rotate(0deg) scale(1)';
+  document.body.appendChild(clone);
+
+  target.classList.add('pip-ui-missing');
+  zone.classList.add('chewing');
+  sayDog(randomFrom(EAT_QUOTES));
+
+  const dx=(end.left+end.width/2)-(start.left+start.width/2);
+  const dy=(end.top+end.height/2)-(start.top+start.height/2);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    clone.style.transform='translate('+dx+'px,'+dy+'px) rotate('+(Math.random()>.5?18:-18)+'deg) scale(.06)';
+    clone.style.opacity='.08';
+  }));
+
+  setTimeout(()=>{
+    clone.remove();
+  },820);
+
+  setTimeout(()=>{
+    zone.classList.remove('chewing');
+    if(target.isConnected){
+      target.classList.remove('pip-ui-missing');
+      target.classList.remove('pip-ui-returned');
+      void target.offsetWidth;
+      target.classList.add('pip-ui-returned');
+      setTimeout(()=>target.classList.remove('pip-ui-returned'),650);
+    }
+    sayDog(randomFrom(SPIT_QUOTES));
+    uiEating=false;
+    scheduleDogNap();
+  },2350);
 }
 function questionFor(item,direction){
   const enPrompt=direction==='en-nl';
@@ -266,6 +358,7 @@ function recordResult(item,correct){
   }else{
     sayDog(dogReaction(correct));
   }
+  scheduleUIMischief(correct?.18:.10,650,1500);
   return earnedBone;
 }
 function updateStats(){
@@ -523,6 +616,7 @@ function initHome(){
   initCommon();
   sayDog((progress._meta.bones||0)>0?'Sophie! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' bewaard. Ik heb toevallig héél veel trek.':'Woef Sophie! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
   scheduleDogNap();
+  scheduleUIMischief(.62,5500,11000);
   if($('#resetProgress'))$('#resetProgress').addEventListener('click',()=>{
     if(!window.confirm('Weet je zeker dat je alle voortgang en botjes wilt wissen?'))return;
     progress={_meta:defaultMeta()};sessionCorrect=0;sessionAttempts=0;saveProgress();updateStats();updateBoneUI();sayDog('Alles schoon! Nieuwe ronde?');
