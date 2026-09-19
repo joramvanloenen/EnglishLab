@@ -221,37 +221,110 @@ footer span:first-child{font-weight:950;color:var(--ink)}
   .switch-mode-link{grid-column:1/-1}
 }
 @media(max-width:680px){
-  .page-shell{width:min(100% - 20px,1180px)}
-  .topbar{min-height:52px;flex-wrap:nowrap;padding:7px 0}
+  .page-shell{width:min(100% - 16px,1180px)}
+
+  /* Home keeps a small brand bar; exercise pages start immediately with the exercise. */
+  .topbar{min-height:48px;flex-wrap:nowrap;padding:5px 0}
   .lesson-pill{display:none}
   .topbar .ghost-button{margin-left:auto}
-  .hero{padding-top:20px}
-  .hero h1{font-size:clamp(2.7rem,14vw,4.25rem)}
+  .brand-mark{width:32px;height:32px;border-radius:10px}
+  .brand{font-size:.9rem}
+  .practice-page .topbar{display:none}
+
+  .hero{padding-top:18px}
+  .hero h1{font-size:clamp(2.55rem,13vw,4rem)}
   .hero-stats{max-width:none}
   .home-grid{grid-template-columns:1fr}
-  .mode-card{min-height:235px}
-  .practice-page-header{padding:10px 0 8px}
-  .practice-title-row{grid-template-columns:1fr;margin-top:4px}
-  .practice-title-row .eyebrow{margin-bottom:5px}
-  .practice-title-row h1{font-size:clamp(2.25rem,11vw,3.35rem)}
-  .mini-stats{margin-top:8px;min-width:0;width:100%}
-  .mini-stats div{padding:8px 5px}
-  .controls{display:grid;grid-template-columns:1fr}
-  .control-group{justify-content:space-between}
-  .control-group select{width:60%;min-width:0}
-  .practice-card{padding:16px;min-height:590px;border-radius:24px}
-  .dog-coach{gap:10px;align-items:flex-start}
-  .dog-avatar-wrap{flex-basis:94px;width:94px;height:106px;transform:scale(.82);transform-origin:top left;margin-right:-15px;margin-bottom:-16px}
-  .dog-bubble{padding:12px 14px}
-  .dog-bubble p{font-size:.94rem}
-  .mode-panel{min-height:400px}
+  .mode-card{min-height:225px}
+
+  /* One compact row: back button + mode name. Everything duplicated elsewhere is hidden. */
+  .practice-page-header{
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+    border-bottom:1px solid rgba(36,34,55,.07);
+  }
+  .back-link{
+    flex:0 0 38px;
+    width:38px;
+    height:38px;
+    min-height:38px;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    font-size:0;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:rgba(255,255,255,.78);
+  }
+  .back-link::before{content:"←";font-size:1.15rem;line-height:1;color:var(--ink)}
+  .practice-title-row{display:block;margin:0;min-width:0}
+  .practice-title-row>div:first-child{display:block}
+  .practice-title-row .eyebrow,
+  .practice-title-row p:not(.eyebrow),
+  .mini-stats{display:none!important}
+  .practice-title-row h1{
+    margin:0;
+    font-size:1.55rem;
+    line-height:1;
+    letter-spacing:-.035em;
+  }
+
+  /* Filters are a single short row rather than two large cards. */
+  .controls{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:7px;
+    margin:7px 0 9px;
+  }
+  .control-group{
+    display:block;
+    padding:0;
+    border:0;
+    background:transparent;
+    min-width:0;
+  }
+  .control-group label{display:none}
+  .control-group select{
+    width:100%;
+    min-width:0;
+    min-height:40px;
+    padding:0 30px 0 11px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    font-size:.82rem;
+    box-shadow:0 3px 12px rgba(70,47,31,.04);
+  }
+  .time-only-note{
+    margin:7px 0 9px;
+    padding:7px 10px;
+    font-size:.72rem;
+  }
+
+  .single-practice-layout{gap:10px}
+  .practice-card{padding:13px;min-height:540px;border-radius:22px}
+  .dog-coach{gap:8px;align-items:flex-start;padding-bottom:4px}
+  .dog-avatar-wrap{
+    flex-basis:82px;width:82px;height:94px;
+    transform:scale(.72);transform-origin:top left;
+    margin-right:-22px;margin-bottom:-24px;
+  }
+  .dog-bubble{padding:10px 12px;border-radius:15px 15px 15px 5px}
+  .dog-name{font-size:.61rem}
+  .dog-bubble p{font-size:.88rem;line-height:1.35}
+  .card-topline{margin:8px 0 8px}
+  .question-kicker{margin:16px 0 6px}
+  .mode-panel{min-height:390px}
   .answer-grid{grid-template-columns:1fr}
   .type-form{grid-template-columns:1fr}
   .type-form .primary-button{width:100%}
   .side-panel{grid-template-columns:1fr}
   .switch-mode-link{grid-column:auto}
   .home-dog-wrap .dog-coach{align-items:flex-start}
-  footer{align-items:flex-start;flex-direction:column;justify-content:center;padding:20px 0}
+  footer{align-items:flex-start;flex-direction:column;justify-content:center;padding:16px 0}
 }
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
