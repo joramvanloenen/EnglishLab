@@ -40,6 +40,13 @@ const STORAGE_KEY='englishlab-progress-v3';
 const PLAYER_NAME_KEY='englishlab-player-name-v1';
 const PREVIOUS_KEYS=['englishlab-progress-v2','englishlab-progress-v1'];
 const CATEGORY_LABELS={words:'Woord',phrases:'Zin',time:'Tijdwoord'};
+const TOYS=[
+  {id:'tennis-ball',name:'Tennisbal',emoji:'🎾',cost:2,quip:'Een klassieker. Pip is nu officieel klaar voor apporteren.'},
+  {id:'frisbee',name:'Frisbee',emoji:'🥏',cost:3,quip:'Pip kijkt nu alsof hij elk moment een wereldrecord gaat zetten.'},
+  {id:'teddy',name:'Knuffelbeer',emoji:'🧸',cost:4,quip:'Voor als Pip na al dat quizzen een dutje nodig heeft.'},
+  {id:'football',name:'Voetbal',emoji:'⚽',cost:5,quip:'Pip belooft dat hij hem niet meteen lek bijt.'},
+  {id:'skateboard',name:'Skateboard',emoji:'🛹',cost:7,quip:'Volstrekt onverantwoord. Pip is er dol op.'}
+];
 const $=s=>document.querySelector(s);
 const pageMode=document.body.dataset.mode||'home';
 
@@ -121,14 +128,13 @@ let currentDirection='en-nl';
 let revealed=false;
 let answered=false;
 let learnTimer=null;
-let dragGhost=null;
 let sleepTimer=null;
 let wakeTimer=null;
 let dogSleeping=false;
 let uiEatTimer=null;
 let uiEating=false;
 
-function defaultMeta(){return {streak:0,bones:0,boneProgress:0};}
+function defaultMeta(){return {streak:0,bones:0,boneProgress:0,toys:[]};}
 function cleanPlayerName(value){
   return String(value||'').replace(/\s+/g,' ').trim().slice(0,24);
 }
@@ -157,6 +163,8 @@ function loadProgress(){
     }
   }catch(e){data={};}
   data._meta=Object.assign(defaultMeta(),data._meta||{});
+  if(!Array.isArray(data._meta.toys))data._meta.toys=[];
+  data._meta.toys=[...new Set(data._meta.toys.filter(id=>TOYS.some(toy=>toy.id===id)))];
   ITEMS.forEach(item=>{
     const p=data[item.id];
     if(p&&typeof p.level!=='number') p.level=Math.max(0,Math.min(3,(p.correct||0)-(p.wrong||0)));
@@ -477,121 +485,106 @@ function updateStats(){
 }
 function updateBoneUI(){
   const bones=progress._meta.bones||0;
-  const step=progress._meta.boneProgress||0;
   if($('#boneCount'))$('#boneCount').textContent=bones;
   if($('#boneHomeCount'))$('#boneHomeCount').textContent=bones;
-  if($('#boneProgress'))$('#boneProgress').style.width=(step*50)+'%';
-  if($('#answersToBone'))$('#answersToBone').textContent=2-step;
-  const token=$('#boneToken');
-  if(token){
-    token.disabled=bones<1;
-    token.classList.toggle('has-bone',bones>0);
-    token.setAttribute('aria-label',bones>0?'Sleep een botje naar Pip. Je hebt '+bones+' botjes.':'Je hebt nog geen botjes.');
-  }
-  if($('#boneHint')){
-    $('#boneHint').innerHTML=bones>0
-      ?'Je hebt <b>'+bones+'</b> botje'+(bones===1?'':'s')+'. Sleep er eentje naar Pip!'
-      :'Nog <b>'+(2-step)+'</b> goede antwoord'+(2-step===1?'':'en')+' voor je volgende botje.';
-  }
+  if($('#storeBoneCount'))$('#storeBoneCount').textContent=bones;
 }
 function showBoneReward(){
   const toast=$('#rewardToast');
   if(toast){
-    toast.textContent='+1 botje! Bewaard voor de startpagina 🦴';
+    toast.textContent='+1 botje! 🦴 Voor Pip zijn speelgoedwinkel';
     toast.hidden=false;
     toast.classList.remove('show');
     void toast.offsetWidth;
     toast.classList.add('show');
     setTimeout(()=>{toast.hidden=true;toast.classList.remove('show');},1450);
   }
-  sayDog('Woef! Botje verdiend! Ik bewaar ’m voor op de startpagina.');
+  sayDog('Woef! +1 botje! Die kun je straks in mijn speelgoedwinkel uitgeven.');
 }
-function bark(){
-  try{
-    const AudioCtx=window.AudioContext||window.webkitAudioContext;
-    if(!AudioCtx)return;
-    const ctx=new AudioCtx();
-    const now=ctx.currentTime;
-    [0,.18].forEach((offset,index)=>{
-      const osc=ctx.createOscillator(),gain=ctx.createGain();
-      osc.type='sawtooth';
-      osc.frequency.setValueAtTime(index?210:170,now+offset);
-      osc.frequency.exponentialRampToValueAtTime(index?95:75,now+offset+.12);
-      gain.gain.setValueAtTime(.0001,now+offset);
-      gain.gain.exponentialRampToValueAtTime(.22,now+offset+.015);
-      gain.gain.exponentialRampToValueAtTime(.0001,now+offset+.15);
-      osc.connect(gain);gain.connect(ctx.destination);
-      osc.start(now+offset);osc.stop(now+offset+.16);
+function ownedToyIds(){
+  return Array.isArray(progress._meta.toys)?progress._meta.toys:[];
+}
+function renderPipToys(){
+  const owned=new Set(ownedToyIds());
+  document.querySelectorAll('.dog-avatar-wrap').forEach(zone=>{
+    let tray=zone.querySelector('.pip-toys');
+    if(!tray){
+      tray=document.createElement('div');
+      tray.className='pip-toys';
+      tray.setAttribute('aria-label','Speelgoed van Pip');
+      zone.appendChild(tray);
+    }
+    tray.innerHTML='';
+    TOYS.filter(toy=>owned.has(toy.id)).forEach(toy=>{
+      const item=document.createElement('span');
+      item.className='pip-toy';
+      item.textContent=toy.emoji;
+      item.title=toy.name;
+      item.setAttribute('aria-label',toy.name);
+      tray.appendChild(item);
     });
-    setTimeout(()=>ctx.close(),700);
-  }catch(e){}
+    tray.hidden=tray.children.length===0;
+  });
 }
-function feedDog(){
-  wakeDog();
-  if((progress._meta.bones||0)<1)return false;
-  progress._meta.bones--;
-  saveProgress();updateBoneUI();
+function renderStore(){
+  const store=$('#toyStore');
+  if(!store)return;
+  const bones=progress._meta.bones||0;
+  const owned=new Set(ownedToyIds());
+  store.innerHTML='';
+  TOYS.forEach(toy=>{
+    const card=document.createElement('article');
+    card.className='toy-card'+(owned.has(toy.id)?' owned':'');
+    const canBuy=!owned.has(toy.id)&&bones>=toy.cost;
+    card.innerHTML=
+      '<div class="toy-emoji" aria-hidden="true">'+toy.emoji+'</div>'+
+      '<div class="toy-card-copy"><h3>'+toy.name+'</h3><p>'+toy.quip+'</p></div>'+
+      '<div class="toy-card-buy"><span class="toy-price">🦴 '+toy.cost+'</span><button type="button" class="toy-buy-button"></button></div>';
+    const button=card.querySelector('.toy-buy-button');
+    if(owned.has(toy.id)){
+      button.textContent='Gekocht ✓';
+      button.disabled=true;
+    }else if(canBuy){
+      button.textContent='Kopen';
+    }else{
+      button.textContent='Nog '+(toy.cost-bones)+' 🦴';
+      button.disabled=true;
+    }
+    button.addEventListener('click',()=>buyToy(toy.id));
+    store.appendChild(card);
+  });
+  updateBoneUI();
+}
+function buyToy(toyId){
+  const toy=TOYS.find(t=>t.id===toyId);
+  if(!toy)return;
+  const owned=ownedToyIds();
+  if(owned.includes(toy.id)){
+    sayDog('Die '+toy.name.toLowerCase()+' heb ik al, {name}! Ik ben verwend genoeg.');
+    return;
+  }
+  const bones=progress._meta.bones||0;
+  if(bones<toy.cost){
+    sayDog('Nog even sparen, {name}. Ik mis '+(toy.cost-bones)+' botje'+(toy.cost-bones===1?'':'s')+' voor de '+toy.name.toLowerCase()+'.');
+    return;
+  }
+  progress._meta.bones=bones-toy.cost;
+  progress._meta.toys=[...owned,toy.id];
+  saveProgress();
+  updateBoneUI();
+  renderStore();
+  renderPipToys();
   const zone=$('#dogDropZone');
   if(zone){
     zone.classList.remove('fed');void zone.offsetWidth;zone.classList.add('fed');
     setTimeout(()=>zone.classList.remove('fed'),900);
   }
   sayDog(randomFrom([
-    'WOOF! Dankjewel, {name}! ♥',
-    'Jaaaa! Botje! {name}, jij bent mijn favoriete mens. ♥',
-    'Woef woef! Deze is heerlijk! ♥',
-    'Botje ontvangen. Staart op standje turbo! ♥',
-    '{name}! Een botje! Ik neem alles terug wat ik ooit over huiswerk heb gezegd. ♥'
+    'WOOF! Een '+toy.name.toLowerCase()+'! Dankjewel, {name}! ♥',
+    '{name}! Kijk wat ik heb! '+toy.emoji+' Mijn staart staat op turbo.',
+    'Yes! '+toy.emoji+' Deze neem ik overal mee naartoe.'
   ]));
-  bark();
-  return true;
 }
-function setupBoneDrag(){
-  const token=$('#boneToken'),zone=$('#dogDropZone');
-  if(!token||!zone)return;
-
-  token.addEventListener('dragstart',e=>{
-    if(token.disabled){e.preventDefault();return;}
-    e.dataTransfer.setData('text/plain','bone');
-    e.dataTransfer.effectAllowed='move';
-  });
-  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drop-ready');});
-  zone.addEventListener('dragleave',()=>zone.classList.remove('drop-ready'));
-  zone.addEventListener('drop',e=>{
-    e.preventDefault();zone.classList.remove('drop-ready');
-    if(e.dataTransfer.getData('text/plain')==='bone')feedDog();
-  });
-
-  token.addEventListener('pointerdown',e=>{
-    if(token.disabled||e.pointerType==='mouse')return;
-    e.preventDefault();
-    dragGhost=document.createElement('div');
-    dragGhost.className='bone-drag-ghost';
-    dragGhost.textContent='🦴';
-    document.body.appendChild(dragGhost);
-    moveGhost(e.clientX,e.clientY);
-    token.setPointerCapture(e.pointerId);
-    zone.classList.add('drop-ready');
-  });
-  token.addEventListener('pointermove',e=>{
-    if(!dragGhost)return;
-    moveGhost(e.clientX,e.clientY);
-  });
-  token.addEventListener('pointerup',e=>{
-    if(!dragGhost)return;
-    const ghost=dragGhost;ghost.style.display='none';
-    const target=document.elementFromPoint(e.clientX,e.clientY);
-    const hit=target&&target.closest&&target.closest('#dogDropZone');
-    ghost.remove();dragGhost=null;zone.classList.remove('drop-ready');
-    if(hit)feedDog();
-  });
-  token.addEventListener('pointercancel',()=>{
-    if(dragGhost){dragGhost.remove();dragGhost=null;}
-    zone.classList.remove('drop-ready');
-  });
-}
-function moveGhost(x,y){if(dragGhost){dragGhost.style.left=x+'px';dragGhost.style.top=y+'px';}}
-
 function renderLearn(){
   if(learnTimer){clearTimeout(learnTimer);learnTimer=null;}
   currentItem=pickItem();currentDirection=chooseDirection();revealed=false;answered=false;
@@ -708,6 +701,7 @@ function wireSharedControls(render){
 function initCommon(){
   updateStats();
   updateBoneUI();
+  renderPipToys();
   const zone=$('#dogDropZone');
   if(zone){
     zone.addEventListener('click',()=>{
@@ -717,13 +711,13 @@ function initCommon(){
 }
 function initHome(){
   initCommon();
-  setupBoneDrag();
-  sayDog((progress._meta.bones||0)>0?'{name}! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' voor me. Sleep er eentje naar mij!':'Woef {name}! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
+  renderStore();
+  sayDog((progress._meta.bones||0)>0?'{name}! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' om uit te geven. Mijn speelgoedwinkel is open!':'Woef {name}! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje voor mijn speelgoedwinkel!');
   scheduleDogNap();
   scheduleUIMischief(.62,5500,11000);
   if($('#resetProgress'))$('#resetProgress').addEventListener('click',()=>{
     if(!window.confirm('Weet je zeker dat je alle voortgang en botjes wilt wissen?'))return;
-    progress={_meta:defaultMeta()};sessionCorrect=0;sessionAttempts=0;saveProgress();updateStats();updateBoneUI();sayDog('Alles schoon! Nieuwe ronde?');
+    progress={_meta:defaultMeta()};sessionCorrect=0;sessionAttempts=0;saveProgress();updateStats();updateBoneUI();renderStore();renderPipToys();sayDog('Alles schoon! Nieuwe ronde?');
   });
 }
 function initLearn(){

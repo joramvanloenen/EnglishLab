@@ -512,3 +512,137 @@ footer span:first-child{font-weight:950;color:var(--ink)}
   .practice-page .single-practice-layout{display:block}
   .practice-page .side-panel{margin-top:10px}
 }
+
+
+/* Pip's toy collection + bone store */
+.home-wallet{
+  width:min(100%,300px);
+  padding:10px 14px;
+  border:1px solid #f0d989;
+  border-radius:15px;
+  background:#fff8df;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  color:#796b45;
+  font-size:.78rem;
+  font-weight:850;
+}
+.home-wallet strong{color:var(--ink);font-size:1.15rem}
+
+.pip-toys{
+  position:absolute;
+  z-index:30;
+  right:-15px;
+  bottom:3px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:2px;
+  width:72px;
+  pointer-events:none;
+}
+.pip-toy{
+  width:27px;
+  height:27px;
+  display:grid;
+  place-items:center;
+  border:2px solid #fff;
+  border-radius:9px;
+  background:#fff8df;
+  font-size:1rem;
+  line-height:1;
+  box-shadow:0 3px 9px rgba(66,44,29,.16);
+  transform:rotate(-4deg);
+}
+.pip-toy:nth-child(even){transform:rotate(5deg)}
+
+.toy-store-section{
+  margin:4px 0 48px;
+  padding:28px;
+  border:1px solid rgba(36,34,55,.08);
+  border-radius:28px;
+  background:rgba(255,255,255,.72);
+}
+.store-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:20px;
+}
+.store-heading h2{margin:0;font-size:clamp(2rem,5vw,3.8rem);line-height:.95;letter-spacing:-.05em}
+.store-heading p:not(.eyebrow){max-width:650px;margin:10px 0 0;color:var(--muted)}
+.store-wallet{
+  flex:0 0 auto;
+  padding:10px 14px;
+  border-radius:999px;
+  background:#fff3bd;
+  border:1px solid #e7c34d;
+  color:#6d5716;
+  font-weight:950;
+}
+.store-wallet strong{font-size:1.25rem;color:var(--ink)}
+.store-wallet span{font-size:.74rem;color:#796b45}
+
+.toy-store-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.toy-card{
+  min-width:0;
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.toy-card.owned{background:#f3fbf6;border-color:#b9e2ca}
+.toy-emoji{
+  width:54px;height:54px;
+  display:grid;place-items:center;
+  border-radius:17px;
+  background:var(--accent-soft);
+  font-size:2rem;
+  transform:rotate(-3deg);
+}
+.toy-card-copy{flex:1}
+.toy-card h3{margin:0;font-size:1rem}
+.toy-card p{margin:5px 0 0;color:var(--muted);font-size:.75rem;line-height:1.35}
+.toy-card-buy{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.toy-price{font-size:.78rem;font-weight:950;color:#796b45}
+.toy-buy-button{
+  min-height:34px;
+  border:0;
+  border-radius:10px;
+  padding:0 10px;
+  background:var(--accent);
+  color:#fff;
+  font-size:.72rem;
+  font-weight:950;
+}
+.toy-buy-button:disabled{background:#eee8df;color:#8c8790;cursor:default}
+.toy-card.owned .toy-buy-button:disabled{background:#dff2e7;color:#267454}
+
+@media(max-width:900px){
+  .toy-store-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .pip-toys{
+    right:-24px;
+    bottom:-2px;
+    width:78px;
+    transform:scale(1.22);
+    transform-origin:right bottom;
+  }
+  .toy-store-section{padding:16px 12px;margin-bottom:30px;border-radius:22px}
+  .store-heading{align-items:flex-start;flex-direction:column;gap:12px;margin-bottom:14px}
+  .store-heading h2{font-size:2.25rem}
+  .store-heading p:not(.eyebrow){font-size:.85rem}
+  .toy-store-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .toy-card{padding:12px;border-radius:16px}
+  .toy-emoji{width:46px;height:46px;border-radius:14px;font-size:1.7rem}
+  .toy-card p{display:none}
+  .toy-card-buy{align-items:flex-end;flex-direction:column}
+  .toy-buy-button{width:100%}
+}
