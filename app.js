@@ -491,19 +491,20 @@ function updateBoneUI(){
   if($('#boneHint')){
     $('#boneHint').innerHTML=bones>0
       ?'Je hebt <b>'+bones+'</b> botje'+(bones===1?'':'s')+'. Sleep er eentje naar Pip!'
-      :'Nog <b id="answersToBone">'+(2-step)+'</b> goede antwoord'+(2-step===1?'':'en')+' voor een botje.';
+      :'Nog <b>'+(2-step)+'</b> goede antwoord'+(2-step===1?'':'en')+' voor je volgende botje.';
   }
 }
 function showBoneReward(){
   const toast=$('#rewardToast');
   if(toast){
+    toast.textContent='+1 botje! Bewaard voor de startpagina 🦴';
     toast.hidden=false;
     toast.classList.remove('show');
     void toast.offsetWidth;
     toast.classList.add('show');
     setTimeout(()=>{toast.hidden=true;toast.classList.remove('show');},1450);
   }
-  sayDog('WOOF! Je hebt een botje verdiend! Sleep ’m naar mij!');
+  sayDog('Woef! Botje verdiend! Ik bewaar ’m voor op de startpagina.');
 }
 function bark(){
   try{
@@ -704,28 +705,9 @@ function wireSharedControls(render){
   });
   if($('#directionSelect'))$('#directionSelect').addEventListener('change',render);
 }
-function repositionRewardPanel(){
-  const panel=$('.bone-panel');
-  const card=$('.practice-card');
-  const dog=$('.dog-coach');
-  const side=$('.side-panel');
-  if(!panel||!card||!dog||!side)return;
-
-  if(window.matchMedia('(max-width: 680px)').matches){
-    if(panel.parentElement!==card || panel.previousElementSibling!==dog){
-      card.insertBefore(panel,dog.nextSibling);
-    }
-  }else{
-    if(panel.parentElement!==side || panel!==side.firstElementChild){
-      side.insertBefore(panel,side.firstElementChild);
-    }
-  }
-}
-
 function initCommon(){
-  repositionRewardPanel();
-  updateStats();updateBoneUI();setupBoneDrag();
-  window.addEventListener('resize',repositionRewardPanel,{passive:true});
+  updateStats();
+  updateBoneUI();
   const zone=$('#dogDropZone');
   if(zone){
     zone.addEventListener('click',()=>{
@@ -735,7 +717,8 @@ function initCommon(){
 }
 function initHome(){
   initCommon();
-  sayDog((progress._meta.bones||0)>0?'{name}! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' bewaard. Ik heb toevallig héél veel trek.':'Woef {name}! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
+  setupBoneDrag();
+  sayDog((progress._meta.bones||0)>0?'{name}! Je hebt '+progress._meta.bones+' botje'+(progress._meta.bones===1?'':'s')+' voor me. Sleep er eentje naar mij!':'Woef {name}! Kies een oefening. Voor elke twee goede antwoorden krijg je een botje!');
   scheduleDogNap();
   scheduleUIMischief(.62,5500,11000);
   if($('#resetProgress'))$('#resetProgress').addEventListener('click',()=>{

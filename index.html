@@ -51,9 +51,16 @@
     <p id="dogSpeech">Woef! Klaar om te oefenen?</p>
   </div>
 </div>
-          <div class="home-bone-strip">
-            <span>Botjes in je mandje</span>
-            <strong>🦴 <span id="boneCount">0</span></strong>
+          <div class="home-bone-panel" aria-label="Botjes voor Pip">
+            <div class="home-bone-info">
+              <span class="home-bone-label">Botjes voor Pip</span>
+              <strong>🦴 <span id="boneCount">0</span></strong>
+            </div>
+            <button id="boneToken" class="bone-token home-bone-token" type="button" draggable="true" aria-label="Sleep dit botje naar Pip" disabled>
+              <span class="bone-emoji">🦴</span>
+              <span>Geef aan Pip</span>
+            </button>
+            <p id="boneHint">Verdien botjes tijdens het oefenen en geef ze hier aan Pip.</p>
           </div>
         </div>
       </section>
