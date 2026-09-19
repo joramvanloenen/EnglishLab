@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#6f5be7">
+  <meta name="description" content="EnglishLab practice for Nice to meet you — Lesson 2">
+  <title>EnglishLab — Nice to meet you</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="EnglishLab home">
+        <span class="brand-mark">EL</span>
+        <span>EnglishLab</span>
+      </a>
+      <div class="lesson-pill">Nice to meet you <span>•</span> Lesson 2</div>
+      <button id="resetProgress" class="ghost-button" type="button" title="Reset all saved progress">Reset progress</button>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="pageTitle">
+        <div>
+          <p class="eyebrow">Myles Smith · Song 1</p>
+          <h1 id="pageTitle">Practice English.<br><span>Make it stick.</span></h1>
+          <p class="hero-copy">Learn the words, phrases and time prepositions from your worksheet. Your progress is saved on this device.</p>
+        </div>
+        <div class="hero-stats" aria-label="Progress">
+          <div class="stat">
+            <span class="stat-value" id="masteredCount">0</span>
+            <span class="stat-label">mastered</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="sessionScore">0/0</span>
+            <span class="stat-label">this session</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="streakCount">0</span>
+            <span class="stat-label">streak</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="controls" aria-label="Practice controls">
+        <div class="control-group">
+          <label for="categorySelect">Practice</label>
+          <select id="categorySelect">
+            <option value="all">Everything</option>
+            <option value="words">Words</option>
+            <option value="phrases">Phrases</option>
+            <option value="time">Time prepositions</option>
+            <option value="mistakes">My mistakes</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="directionSelect">Direction</label>
+          <select id="directionSelect">
+            <option value="mix">Mix both ways</option>
+            <option value="en-nl">English → Dutch</option>
+            <option value="nl-en">Dutch → English</option>
+          </select>
+        </div>
+      </section>
+
+      <nav class="mode-tabs" aria-label="Practice modes">
+        <button class="mode-tab active" data-mode="learn" type="button"><span>01</span> Learn</button>
+        <button class="mode-tab" data-mode="quiz" type="button"><span>02</span> Quiz</button>
+        <button class="mode-tab" data-mode="type" type="button"><span>03</span> Type</button>
+        <button class="mode-tab" data-mode="time" type="button"><span>04</span> Time challenge</button>
+      </nav>
+
+      <section class="practice-layout">
+        <article class="practice-card" id="practiceCard">
+          <div id="learnMode" class="mode-panel">
+            <div class="card-topline">
+              <span class="category-badge" id="learnCategory">Word</span>
+              <span class="counter" id="learnCounter">1 / 33</span>
+            </div>
+            <button id="speakButton" class="speak-button" type="button" aria-label="Hear the English pronunciation">🔊 Hear it</button>
+            <button id="flashcard" class="flashcard" type="button" aria-live="polite">
+              <span class="flash-label" id="flashPromptLabel">English</span>
+              <strong id="flashPrompt">colour</strong>
+              <span class="tap-hint" id="tapHint">Tap to reveal</span>
+              <span class="flash-answer" id="flashAnswer" hidden>kleur</span>
+            </button>
+            <div class="learn-actions">
+              <button id="againButton" class="secondary-button" type="button">↺ Again</button>
+              <button id="gotItButton" class="primary-button" type="button">Got it ✓</button>
+            </div>
+          </div>
+
+          <div id="quizMode" class="mode-panel" hidden>
+            <div class="card-topline">
+              <span class="category-badge" id="quizCategory">Word</span>
+              <span class="counter" id="quizCounter">Question</span>
+            </div>
+            <p class="question-kicker" id="quizPromptLabel">What does this mean?</p>
+            <h2 class="question" id="quizPrompt">colour</h2>
+            <div class="answer-grid" id="quizAnswers"></div>
+            <p class="feedback" id="quizFeedback" aria-live="polite"></p>
+            <button id="quizNext" class="primary-button next-button" type="button" hidden>Next →</button>
+          </div>
+
+          <div id="typeMode" class="mode-panel" hidden>
+            <div class="card-topline">
+              <span class="category-badge" id="typeCategory">Word</span>
+              <span class="counter" id="typeCounter">Type the answer</span>
+            </div>
+            <p class="question-kicker" id="typePromptLabel">Translate into Dutch</p>
+            <h2 class="question" id="typePrompt">colour</h2>
+            <form id="typeForm" class="type-form" autocomplete="off">
+              <label class="sr-only" for="typeAnswer">Your answer</label>
+              <input id="typeAnswer" type="text" inputmode="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Type your answer…">
+              <button class="primary-button" type="submit">Check</button>
+            </form>
+            <p class="feedback" id="typeFeedback" aria-live="polite"></p>
+            <button id="typeNext" class="primary-button next-button" type="button" hidden>Next →</button>
+          </div>
+
+          <div id="timeMode" class="mode-panel" hidden>
+            <div class="card-topline">
+              <span class="category-badge">Time preposition</span>
+              <span class="counter" id="timeCounter">Fill the gap</span>
+            </div>
+            <p class="question-kicker">Which word belongs in the gap?</p>
+            <h2 class="sentence" id="timeSentence">We can play together ___ lunch.</h2>
+            <p class="dutch-hint" id="timeHint">Hint: na</p>
+            <div class="chip-grid" id="timeAnswers"></div>
+            <p class="feedback" id="timeFeedback" aria-live="polite"></p>
+            <button id="timeNext" class="primary-button next-button" type="button" hidden>Next →</button>
+          </div>
+        </article>
+
+        <aside class="side-panel">
+          <div class="side-section">
+            <div class="side-heading">
+              <h2>Lesson set</h2>
+              <span>33 items</span>
+            </div>
+            <div class="set-row"><span class="dot words-dot"></span><strong>19</strong><span>words</span></div>
+            <div class="set-row"><span class="dot phrases-dot"></span><strong>8</strong><span>phrases</span></div>
+            <div class="set-row"><span class="dot time-dot"></span><strong>6</strong><span>time words</span></div>
+          </div>
+          <div class="side-section">
+            <div class="side-heading">
+              <h2>Your progress</h2>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+            <p class="side-copy" id="progressMessage">Every correct answer moves a word closer to mastered.</p>
+          </div>
+          <div class="tip-box">
+            <span class="tip-icon">✦</span>
+            <p><strong>Memory trick:</strong> say the English word out loud before revealing the answer.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="reference-section">
+        <div class="reference-heading">
+          <div>
+            <p class="eyebrow">Cheat sheet</p>
+            <h2>Need a quick look?</h2>
+          </div>
+          <button id="toggleReference" class="ghost-button" type="button" aria-expanded="false">Show reference</button>
+        </div>
+        <div id="referenceContent" class="reference-content" hidden></div>
+      </section>
+    </main>
+
+    <footer>
+      <span>EnglishLab</span>
+      <span>Built for practice, not panic.</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
