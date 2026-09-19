@@ -315,6 +315,38 @@ footer span:first-child{font-weight:950;color:var(--ink)}
   .dog-bubble{padding:10px 12px;border-radius:15px 15px 15px 5px}
   .dog-name{font-size:.61rem}
   .dog-bubble p{font-size:.88rem;line-height:1.35}
+
+  /* Keep Pip's reward right next to him instead of far below the exercise. */
+  .practice-card>.bone-panel{
+    margin:2px 0 8px;
+    padding:8px 9px;
+    border-radius:14px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 76px;
+    grid-template-areas:
+      "head token"
+      "meter token";
+    gap:6px 8px;
+    align-items:center;
+  }
+  .practice-card>.bone-panel .bone-panel-head{grid-area:head;gap:8px}
+  .practice-card>.bone-panel .bone-panel-head>div>span{display:none}
+  .practice-card>.bone-panel .bone-panel-head h2{font-size:.82rem}
+  .practice-card>.bone-panel .bone-score{padding:4px 7px;font-size:.78rem}
+  .practice-card>.bone-panel .bone-meter{grid-area:meter;margin:0;height:7px}
+  .practice-card>.bone-panel p{display:none}
+  .practice-card>.bone-panel .bone-token{
+    grid-area:token;
+    width:76px;
+    min-height:58px;
+    padding:4px;
+    border-radius:12px;
+    flex-direction:column;
+    gap:0;
+    font-size:.58rem;
+    line-height:1.05;
+  }
+  .practice-card>.bone-panel .bone-emoji{font-size:1.35rem}
   .card-topline{margin:8px 0 8px}
   .question-kicker{margin:16px 0 6px}
   .mode-panel{min-height:390px}
